@@ -20,7 +20,7 @@ class AppBarSearch extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            height: 40,
+            height: 50,
             child: Row(
               children: <Widget>[
                 new Text(title, style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),),

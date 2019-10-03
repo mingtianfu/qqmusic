@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:qqmusic/pages/InheritedTestModel.dart';
+import 'package:qqmusic/pages/LyricPage.dart';
 
 class InheritedContext extends InheritedWidget {
   
-  //数据
+  // 数据
   final InheritedTestModel inheritedTestModel;
 
-  //点击+号的方法
-  final Function() increment;
+  // 添加到播放列表方法
+  final Function(List songList, [int index]) increment;
 
-  //点击-号的方法
+  // 清除播放列表的方法
   final Function() reduce;
+
+  // 设置播放歌曲的索引
+  final Function(int index) setIndex;
+
+  // 设置歌词
+  final Function(LyricContent lyric) setLyric;
 
   InheritedContext({
     Key key,
     @required this.inheritedTestModel,
     @required this.increment,
     @required this.reduce,
+    @required this.setIndex,
+    this.setLyric,
     @required Widget child,
   }) : super(key: key, child: child);
 

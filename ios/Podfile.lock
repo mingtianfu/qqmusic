@@ -1,21 +1,46 @@
 PODS:
   - Flutter (1.0.0)
-  - video_player (0.0.1):
+  - flutter_ijkplayer (0.0.1):
     - Flutter
+    - FlutterIJK (~> 0.1.0)
+  - FlutterIJK (0.1.0)
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - path_provider (0.0.1):
+    - Flutter
+  - sqflite (0.0.1):
+    - Flutter
+    - FMDB (~> 2.7.2)
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
-  - video_player (from `.symlinks/plugins/video_player/ios`)
+  - flutter_ijkplayer (from `.symlinks/plugins/flutter_ijkplayer/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - sqflite (from `.symlinks/plugins/sqflite/ios`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - FlutterIJK
+    - FMDB
 
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
-  video_player:
-    :path: ".symlinks/plugins/video_player/ios"
+  flutter_ijkplayer:
+    :path: ".symlinks/plugins/flutter_ijkplayer/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  video_player: 3964090a33353060ed7f58aa6427c7b4b208ec21
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_ijkplayer: ef9006131553deb6d8ae6d7fbd3bcbf93b135930
+  FlutterIJK: 68b00c1d11162b5016f3611853aa699e198bd1d2
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
+  sqflite: ff1d9da63c06588cc8d1faf7256d741f16989d5a
 
 PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
 

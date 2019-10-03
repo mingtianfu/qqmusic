@@ -1,0 +1,32 @@
+{
+    "id": 10869713,
+    "name": "多想在平庸的生活拥抱你",
+    "artistId": 12429072,
+    "artistName": "隔壁老樊",
+    "briefDesc": "隔壁老樊热门单曲《多想在平庸的生活拥抱你》",
+    "desc": "隔壁老樊单曲《多想在平庸的生活拥抱你》MV正式上线，并首次借由现代舞深度地诠释出了歌曲中的内容。灰暗的画面，孤独的舞者，沧桑的嗓音，使得整支mv已不再需要过多的情节，便已营造出了一种孤寂的意境。而当舞者与老樊奋力相拥之时，爱情中反复交织的甜与涩已被演绎到了淋漓尽致。",
+    "cover": "http://p1.music.126.net/Yg995lCDqKooohzsRsUmCA==/109951164111645659.jpg",
+    "coverId": 109951164111645660,
+    "playCount": 5174233,
+    "subCount": 27246,
+    "shareCount": 8987,
+    "likeCount": 31551,
+    "commentCount": 4405,
+    "duration": 268000,
+    "nType": 0,
+    "publishTime": "2019-05-31",
+    "brs": {
+        "240": "http://vodkgeyttp8.vod.126.net/cloudmusic/3318/core/7395/c6ecc0af36df8d0b38c5839d1ea286e9.mp4?wsSecret=c39dff9111e9479df67706ddc055f1ca&wsTime=1570101222",
+        "480": "http://vodkgeyttp8.vod.126.net/cloudmusic/3318/core/7395/99ec035447b5ada5dbfac6b081015003.mp4?wsSecret=779b053892e1e0f3d41d5fc755680f5e&wsTime=1570101222",
+        "720": "http://vodkgeyttp8.vod.126.net/cloudmusic/3318/core/7395/3a1abc342d9311e055c611210b66a726.mp4?wsSecret=51a9a8c0d16971809d3674a0bec99ff0&wsTime=1570101222",
+        "1080": "http://vodkgeyttp8.vod.126.net/cloudmusic/3318/core/7395/449fea4443ddc4b1377207d2f8e9b4b8.mp4?wsSecret=8e26f2dacc44b0ea8258fce9e486c258&wsTime=1570101222"
+    },
+    "artists": [
+        {
+            "id": 12429072,
+            "name": "隔壁老樊"
+        }
+    ],
+    "isReward": false,
+    "commentThreadId": "R_MV_5_10869713"
+}

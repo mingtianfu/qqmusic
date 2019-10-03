@@ -1,91 +1,114 @@
-// import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:qqmusic/pages/MainPage.dart';
-import 'package:qqmusic/routes.dart';
-import 'package:qqmusic/pages/InheritedContext.dart';
-import 'package:qqmusic/pages/InheritedTestModel.dart';
+import 'package:provider/provider.dart';
+import 'package:qqmusic/pages/App.dart';
+import 'package:qqmusic/pages/Model/PlayModel.dart';
 
-// void collectLog(String line){
-//   //收集日志
-//     print('收集日志:$line');
-// }
-// void reportErrorAndLog(FlutterErrorDetails details){
-//     //上报错误和日志逻辑
-//     print('上报错误和日志逻辑:$details');
-// }
+// void main() => runApp(App());
 
-// FlutterErrorDetails makeDetails(Object obj, StackTrace stack){
-//     // 构建错误信息
-//     print('构建错误信息obj:$obj');
-//     print('构建错误信息stack:$stack');
-// }
-
-// void main() {
-//   FlutterError.onError = (FlutterErrorDetails details) {
-//     reportErrorAndLog(details);
-//   };
-//   runZoned(
-//     () => runApp(App()),
-//     zoneSpecification: ZoneSpecification(
-//       print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
-//         collectLog(line); // 收集日志
-//       },
-//     ),
-//     onError: (Object obj, StackTrace stack) {
-//       var details = makeDetails(obj, stack);
-//       reportErrorAndLog(details);
-//     },
-//   );
-// }
-
-void main() => runApp(App());
-
-class App extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return new _AppState();
-  }
+void main() {
+  runApp(
+    Provider.value(
+      child: ChangeNotifierProvider.value(
+        value: PlayModel(),
+        child: App(),
+      ),
+    ),
+  );
 }
 
-class _AppState extends State<App> {
-  InheritedTestModel inheritedTestModel;
+// class App extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     print('app build');
+//     return MaterialApp(
+//       theme: ThemeData.dark(),
+//       home: FirstScreen(),
+//     );
+//   }
+// }
 
-  _initData() {
-    inheritedTestModel = new InheritedTestModel(0);
-  }
+// class FirstScreen extends StatefulWidget {
 
-  @override
-  void initState() {
-    _initData();
-    super.initState();
-  }
+//   @override 
+//   FirstScreenState createState() => FirstScreenState();
+// }
 
-  _incrementCount() {
-    setState(() {
-      inheritedTestModel = new InheritedTestModel(inheritedTestModel.count + 1);
-    });
-  }
+// class FirstScreenState extends State<FirstScreen> {
 
-  _reduceCount() {
-    setState(() {
-      inheritedTestModel = new InheritedTestModel(inheritedTestModel.count - 1);
-    });
-  }
-  
-  @override 
-  Widget build(BuildContext context) {
-    return new InheritedContext(
-      inheritedTestModel: inheritedTestModel,
-      increment: _incrementCount,
-      reduce: _reduceCount,
-      child: new MaterialApp(
-        theme: new ThemeData(
-          primarySwatch: Colors.green,
-        ),
-        routes: routes,
-        home: new MainPage()
-      )
-    );
-  }
-}
+//   final _playModel = PlayModel();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     // print(_playModel.songListIndex);
+//     WidgetsBinding.instance.addPostFrameCallback((callback){
+//       Provider.of<PlayModel>(context).setSongListIndex(1);
+//     });
+//   }
+
+//   add() {
+//     WidgetsBinding.instance.addPostFrameCallback((callback){
+//       Provider.of<PlayModel>(context).setSongListIndex(12);
+//     });
+//   }
+
+//   @override 
+//   Widget build(BuildContext context) {
+//     print('FirstScreen build');
+//     final _playModel = Provider.of<PlayModel>(context);
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('FirstScreen'),
+//       ),
+//       body: Center(
+//         child: Text(
+//           'Value: ${_playModel.songListIndex}',
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: () {
+//           add();
+//           // Navigator.of(context).push(
+//           //   MaterialPageRoute(builder: (context) => SecondPage()),
+//           // );
+//         },
+//         child: Icon(Icons.navigate_next),
+//       ),
+//     );
+//   }
+// }
+
+// class SecondPage extends StatelessWidget {
+//   @override 
+//   Widget build(BuildContext context) {
+//     print('SecondPage build');
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('SecondPage'),
+//       ),
+//       body: Consumer<PlayModel>(
+//         builder: (BuildContext context, PlayModel playModel,  _) {
+//           print('SecondPage Center build');
+//           return Center(
+//             child: Text(
+//               'Value: ${playModel.songListIndex}',
+//             ),
+//           );
+//         },
+//       ),
+//       floatingActionButton: Consumer<PlayModel>(
+//         builder: (BuildContext context, PlayModel playModel, child) {
+//           print('SecondPage floatingActionButton build');
+//           return FloatingActionButton(
+//             onPressed: () {
+//               playModel.setSongListIndex(2);
+//             },
+//             child: child,
+//           );
+//         },
+//         child: Icon(Icons.add),
+//       ),
+//     );
+//   }
+// }

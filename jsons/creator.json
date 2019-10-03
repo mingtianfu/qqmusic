@@ -1,0 +1,35 @@
+{
+    "defaultAvatar":false,
+    "province":110000,
+    "authStatus":0,
+    "followed":false,
+    "avatarUrl":"http://p1.music.126.net/wKC3ilv-31BXw2SENCENGA==/109951163390157568.jpg",
+    "accountStatus":0,
+    "gender":2,
+    "city":110101,
+    "birthday":845049600000,
+    "userId":323628837,
+    "userType":200,
+    "nickname":"-情殇雨夜-",
+    "signature":"人总是在接近幸福时倍感幸福，在幸福进行时却患得患失。",
+    "description":"",
+    "detailDescription":"",
+    "avatarImgId":109951163390157570,
+    "backgroundImgId":109951163390160460,
+    "backgroundUrl":"http://p1.music.126.net/oLM5UA3hIowOpVfZWPQe4w==/109951163390160463.jpg",
+    "authority":0,
+    "mutual":false,
+    "expertTags":[
+    "华语",
+    "流行"
+    ],
+    "experts":{
+        "2": "情感图文达人"
+    },
+    "djStatus":0,
+    "vipType":0,
+    "remarkName":null,
+    "avatarImgIdStr":"109951163390157568",
+    "backgroundImgIdStr":"109951163390160463",
+    "avatarImgId_str":"109951163390157568"
+}

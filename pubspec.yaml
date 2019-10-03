@@ -26,12 +26,20 @@ dependencies:
   english_words: ^3.1.0
   http: 0.12.0+2
   json_annotation: ^2.0.0
-  video_player: ^0.10.2+1
   flutter_swiper: ^1.1.6
+  dio: ^3.0.1
+  # dio: 2.1.16
+  path_provider: ^1.2.0
+  flutter_screenutil: ^0.6.0
+  cached_network_image: ^1.1.1
+  flutter_ijkplayer: ^0.3.3
+  provider: ^3.1.0
+  shared_preferences: ^0.5.3+4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  json_model: ^0.0.2
   build_runner: ^1.0.0
   json_serializable: ^2.0.0
 
@@ -96,7 +104,44 @@ flutter:
 
     - assets/images/live_share_actionshet_normal.png
     - assets/images/album_folder_header_comment.png
-  #  - images/a_dot_burr.jpeg
+    - assets/images/common_list_header_sort.png
+    - assets/images/ringtone_play.png
+    - assets/images/playlist_icon_download.png
+    - assets/images/ic_download_list_download.png
+    - assets/images/common_list_header_mutilchoose_not_follow_skin_highnight.png
+    - assets/images/item_more_icon.png
+    - assets/images/item_mv_icon.png
+    - assets/images/playlist_icon_add_to.png
+    - assets/images/playlist_icon_garbage.png
+    - assets/images/playlist_icon_paper_clip.png
+    - assets/images/playlist_icon_delete.png
+    - assets/images/play_mode_normal.png
+    - assets/images/play_mode_shuffle.png
+    - assets/images/play_mode_single.png
+    - assets/images/player_album_cover_default.png
+    - assets/images/live_gift_arrow_right.png
+    - assets/images/album_folder_header_like.png
+    - assets/images/album_folder_header_comment.png
+    - assets/images/album_folder_header_share.png
+    - assets/images/profile_back_normal.png
+    - assets/images/back_normal_white.png
+    - assets/images/back_normal_black.png
+    - assets/images/live_play_list_still.png
+    - assets/images/lyric_playbutton_two.png
+    - assets/images/minibar_btn_default_playlist.png
+    - assets/images/minibar_btn_default_play.png
+    - assets/images/btn_mv_landscape_play.png
+    - assets/images/bg_qafp_recording.png
+    - assets/images/bg_qafp_normal.png
+    - assets/images/bg_qafp_clicked.png
+    - assets/images/ic_qafp_6.png
+    - assets/images/radio_live_entry_left_icon.png
+    - assets/images/miniplayer_btn_radiolist_highlight.png
+
+    - assets/media/ll.mp3
+    - assets/media/2.mp4
+
+  #  - images/a_dot_burr.jpeg 
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
