@@ -11,9 +11,6 @@ import 'package:qqmusic/pages/PlaySongBarPage.dart';
 import 'package:qqmusic/utils/HttpUtils.dart';
 import 'package:qqmusic/utils/hexToColor.dart';
 
-const url =
-    'http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg';
-
 class SingerDetailPage extends StatefulWidget {
     SingerDetailPage({Key key, this.id, this.audioPlayer, this.initAudioPlayer, this.handleTap}) : super(key: key);
   final int id;

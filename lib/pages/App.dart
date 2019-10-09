@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:camera/camera.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qqmusic/component/Toast.dart';
@@ -16,14 +18,25 @@ import 'package:qqmusic/pages/PlayListTapPage.dart';
 import 'package:qqmusic/pages/PlaySongBarPage.dart';
 import 'package:qqmusic/pages/PlaySongPage.dart';
 import 'package:qqmusic/pages/RecommendPage.dart';
+import 'package:qqmusic/pages/SearchPage.dart';
 import 'package:qqmusic/pages/SingerDetailPage.dart';
 import 'package:qqmusic/pages/SingersList.dart';
+import 'package:qqmusic/pages/TakeVideoPage.dart';
 import 'package:qqmusic/pages/TopListPage.dart';
 import 'package:flutter_ijkplayer/flutter_ijkplayer.dart';
 import 'package:qqmusic/utils/HttpUtils.dart';
 import 'package:qqmusic/utils/hexToColor.dart';
 
+import 'CameraPage.dart';
+
 class App extends StatefulWidget {
+  final List<CameraDescription> cameras;
+ 
+  const App({
+    Key key,
+    @required this.cameras,
+  }) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return new _AppState();
@@ -66,6 +79,7 @@ class _AppState extends State<App> with TickerProviderStateMixin{
     // WidgetsBinding.instance.addPostFrameCallback((callback){
     //   Provider.of<CounterModel>(context).increment();
     // });
+
     subscriptPlayFinish();
     // animationController = new AnimationController(vsync: this, duration: Duration(seconds: 10))
     // ..addListener(() {
@@ -247,7 +261,18 @@ class _AppState extends State<App> with TickerProviderStateMixin{
       theme: new ThemeData(
         primarySwatch: Colors.green,
       ),
-      routes: { 
+      routes: {
+        'searchPage': (context) => SearchPage(
+          audioPlayer: _audioPlayer,
+          handleTap: () => Navigator.push(context,
+            MaterialPageRoute(
+              builder: (context) {
+                return PlaySongPage(audioPlayer: _audioPlayer);
+              },
+              fullscreenDialog: true
+            )
+          ),
+        ),
         'playListTapPage': (context) => PlayListTapPage(
           audioPlayer: _audioPlayer,
           handleTap: () => Navigator.push(context,
@@ -302,6 +327,12 @@ class _AppState extends State<App> with TickerProviderStateMixin{
           id: ModalRoute.of(context).settings.arguments,
         ),
         'listenPage':(context) => ListenPage(),
+        'cameraPage': (context) => CameraPage(
+          cameras: widget.cameras,
+        ),
+        'takeVideoPage': (context) => TakeVideoPage(
+          cameras: widget.cameras,
+        ),
       },
       home: Builder(
         builder: (context) => Scaffold(

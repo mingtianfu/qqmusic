@@ -43,9 +43,14 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
 
   getBanner() async {
     try {
-      var result = await HttpUtils.request("/banner?type=1");
+      var result = await HttpUtils.request("/banner");
+      if (result == 'none') {
+        Toast.toast(context, '没有打开网络');
+      } else if(result == null) {
+        Toast.toast(context, '请求数据失败，请稍后重试');
+      } else {
         Banners banners = Banners.fromJson(json.decode(result));
-        // print(banners.banners.length);
+        
         if (banners.code == 200 && banners.banners.length > 0) {
           setState(() {
             bannerList = banners.banners;
@@ -53,8 +58,9 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
         } else {
           Toast.toast(context, '没有数据');
         }
+      }
     } catch (e) {
-      print(e);
+      print('e:$e');
     }
   }
 
@@ -140,7 +146,7 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
           ),
           scrollDirection: Axis.horizontal,
           autoplay: true,
-          onTap: (index) => print('点击了第$index${bannerList[index].url}个'),
+          onTap: (index) => print('点击了第$index${bannerList[index].imageUrl}个'),
         ),
       )
     );
@@ -148,7 +154,7 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
 
   Widget _swiperBuilder(BuildContext context, int index) {
     return (Image.network(
-      bannerList[index].pic,
+      bannerList[index].imageUrl,
       fit: BoxFit.fill,
     ));
   }

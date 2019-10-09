@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'dart:io';
 import 'dart:async';
+import 'package:connectivity/connectivity.dart';
  
 /*
  * 封装 restful 请求
@@ -19,9 +19,8 @@ class HttpUtils {
   static Dio dio;
  
   /// default options
-  static const String API_PREFIX = 'http://192.168.0.102:3000';
-  // static const String API_PREFIX = 'http://192.168.0.103:3000';
-  // static const String API_PREFIX = 'http://www.china-4s.com';
+  // static const String API_PREFIX = 'http://192.168.0.105:3000';
+  static const String API_PREFIX = 'http://www.china-4s.com';
   static const int CONNECT_TIMEOUT = 10000;
   static const int RECEIVE_TIMEOUT = 3000;
  
@@ -32,10 +31,18 @@ class HttpUtils {
   static const String PATCH = 'patch';
   static const String DELETE = 'delete';
  
-  static Future<dynamic> request (
-      String url,
-      { data, method }) async {
+  static Future<dynamic> request (String url, { data, method }) async {
  
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    print(connectivityResult);
+    if (connectivityResult == ConnectivityResult.mobile) {
+      // I am connected to a mobile network.
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      // I am connected to a wifi network.
+    } else {
+      return 'none';
+    }
+
     data = data ?? {};
     method = method ?? 'GET';
  
@@ -50,7 +57,7 @@ class HttpUtils {
     /// 打印请求相关信息：请求地址、请求方式、请求参数
     print('请求地址：【' + dio.options.baseUrl + url + '】');
     print('请求参数：' + data.toString());
- 
+    
     var result;
  
     try {

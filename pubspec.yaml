@@ -35,6 +35,9 @@ dependencies:
   flutter_ijkplayer: ^0.3.3
   provider: ^3.1.0
   shared_preferences: ^0.5.3+4
+  connectivity: ^0.4.4
+  camera: ^0.5.5+1
+  video_player: ^0.10.2+3
 
 dev_dependencies:
   flutter_test:
@@ -137,6 +140,8 @@ flutter:
     - assets/images/ic_qafp_6.png
     - assets/images/radio_live_entry_left_icon.png
     - assets/images/miniplayer_btn_radiolist_highlight.png
+    - assets/images/icon_song_action_sheet_normal.png
+    - assets/images/icon_song_action_sheet_up.png
 
     - assets/media/ll.mp3
     - assets/media/2.mp4

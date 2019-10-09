@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qqmusic/pages/App.dart';
 import 'package:qqmusic/pages/Model/PlayModel.dart';
+import 'package:camera/camera.dart';
 
 // void main() => runApp(App());
 
-void main() {
+Future<void>  main() async{
+  List<CameraDescription> cameras;
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    print(e);
+  }
+
   runApp(
     Provider.value(
       child: ChangeNotifierProvider.value(
         value: PlayModel(),
-        child: App(),
+        child: App(
+          cameras: cameras,
+        ),
       ),
     ),
   );

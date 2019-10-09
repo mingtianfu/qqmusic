@@ -6,6 +6,7 @@ export 'personalizeditem.dart' ;
 export 'playlist.dart' ; 
 export 'artist.dart' ; 
 export 'playlistdetailp.dart' ; 
+export 'searchSuggest.dart' ; 
 export 'albums.dart' ; 
 export 'toplistdetail.dart' ; 
 export 'songList.dart' ; 

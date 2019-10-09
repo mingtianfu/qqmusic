@@ -22,6 +22,7 @@ class MvDetail {
     num duration;
     num nType;
     String publishTime;
+    Map<String,dynamic> brs;
     List artists;
     bool isReward;
     String commentThreadId;

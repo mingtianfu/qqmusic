@@ -79,6 +79,19 @@ class _RecommendPageState extends State<RecommendPage> with AutomaticKeepAliveCl
                 onPressedRight: handleRecognize,
                 onPressed: handlePresseSearch,
               ),
+              Text('data'),
+              FlatButton(
+                child: Text("拍照"),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('cameraPage');
+                },
+              ),
+              FlatButton(
+                child: Text("拍视频"),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('takeVideoPage');
+                },
+              )
             ],
           ),
         ),

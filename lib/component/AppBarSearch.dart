@@ -16,7 +16,7 @@ class AppBarSearch extends StatelessWidget {
   @override 
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15),
+      padding: EdgeInsets.only(left: 15, right: 15, bottom: 10),
       child: Column(
         children: <Widget>[
           Container(
@@ -26,7 +26,7 @@ class AppBarSearch extends StatelessWidget {
                 new Text(title, style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),),
                 Expanded(
                   child: GestureDetector(
-                    onTap: onPressed,
+                    onTap: () => Navigator.of(context).pushNamed('searchPage'),
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 0.0, horizontal: 15),
                       height: 30,
