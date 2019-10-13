@@ -4,5 +4,5 @@ flutter qqmusic
 ## 图片预览 -->
 | home | playlist | lyric |
 |------|-----|----|
-|![playing](./screen_record/main.png)| ![playlist](./screen_record/playlist.png)| ![lyric](./screen_record/lyric.png)| 
+|![playing](./screen_record/main.jpg)| ![playlist](./screen_record/playlist.jpg)| ![lyric](./screen_record/lyric.jpg)| 
 
