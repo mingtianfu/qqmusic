@@ -1,7 +1,8 @@
 # qqmusic
 flutter qqmusic
 
-## 交互效果
-| playing | playlist | lyric |
+## 图片预览 -->
+| home | playlist | lyric |
 |------|-----|----|
-|![playing](https://github.com/mingtianfu/qqmusic/blob/master/screen_record/lyric.webm)| ![playlist](./screen_record/lyric.webm) | ![lyric](./screen_record/lyric.webm) |
+|![playing](./screen_record/main.png)| ![playlist](./screen_record/playlist.png)| ![lyric](./screen_record/lyric.png)| 
+
