@@ -189,9 +189,10 @@ class _AppState extends State<App> with TickerProviderStateMixin{
       if (data['code'] == 200 && data['data'][0]['url'] != null) {
         await _audioPlayer.setNetworkDataSource(
           data['data'][0]['url'],
-          autoPlay: false
+          autoPlay: true
         );
         if (_autoPlay) {
+          print(_autoPlay);
           _audioPlayer.play();
         }
         _getLyric(id);
