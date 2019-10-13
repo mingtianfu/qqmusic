@@ -19,8 +19,8 @@ class HttpUtils {
   static Dio dio;
  
   /// default options
-  // static const String API_PREFIX = 'http://192.168.0.105:3000';
-  static const String API_PREFIX = 'http://www.china-4s.com';
+  static const String API_PREFIX = 'http://192.168.0.106:3000';
+  // static const String API_PREFIX = 'http://www.china-4s.com';
   static const int CONNECT_TIMEOUT = 10000;
   static const int RECEIVE_TIMEOUT = 3000;
  

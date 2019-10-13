@@ -35,10 +35,17 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
 
   @override 
   void initState() {
+    print('hall init');
     super.initState();
     getBanner();
     getPersonalized();
     getTopAlbum();
+  }
+
+    @override
+  void dispose() {
+    print('hall dispose');
+    super.dispose();
   }
 
   getBanner() async {
@@ -105,25 +112,25 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
       child: Center(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 30.0),
-          child: ListView(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                AppBarSearch(
-                  title: '音乐馆', 
-                  rightImage: Image.asset('assets/images/icon_menu_recognize_lyric.png', width: 30,),
-                  onPressedRight: handleRecognize,
-                  onPressed: handlePresseSearch,
-                ),
-                bannerList.length == 0 ? Text('') : _swiper(),
-                _gridview(),
-                _buildPersonalized(),
-                _buildTopAlbum(),
-                _buildTopAlbum(),
-              ],
-            )
-          ],
-      ),
+          child: Scrollbar( // 显示进度条
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  AppBarSearch(
+                    title: '音乐馆', 
+                    rightImage: Image.asset('assets/images/icon_menu_recognize_lyric.png', width: 30,),
+                    onPressedRight: handleRecognize,
+                    onPressed: handlePresseSearch,
+                  ),
+                  bannerList.length == 0 ? Text('') : _swiper(),
+                  _gridview(),
+                  _buildPersonalized(),
+                  _buildTopAlbum(),
+                  _buildTopAlbum(),
+                ],
+              )
+            ),
+          ),
         ),
       )
     );

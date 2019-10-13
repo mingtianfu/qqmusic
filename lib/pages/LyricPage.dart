@@ -306,6 +306,7 @@ class LyricState extends State<LyricPage> with TickerProviderStateMixin {
 }
 
 class LyricPainter extends ChangeNotifier implements CustomPainter {
+  
   LyricContent lyric;
   List<TextPainter> lyricPainters;
 

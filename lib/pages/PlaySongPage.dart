@@ -491,7 +491,10 @@ class _PlaySongPageState extends State<PlaySongPage>
                 ImageButton(
                   width: 50,
                   height: 50,
-                  onTap: () => playModel.setSongListIndex(playModel.songListIndex - 1),
+                  onTap: () {
+                    playModel.setSongListIndex(playModel.songListIndex - 1);
+                    playModel.setAutoPlay(true);
+                  },
                   assetImage:
                       AssetImage('assets/images/lyric_play_pervious_click.png'),
                 ),
@@ -516,7 +519,10 @@ class _PlaySongPageState extends State<PlaySongPage>
                 ImageButton(
                   width: 50,
                   height: 50,
-                  onTap: () => playModel.setSongListIndex(playModel.songListIndex + 1),
+                  onTap: () {
+                    playModel.setSongListIndex(playModel.songListIndex + 1);
+                    playModel.setAutoPlay(true);
+                  },
                   assetImage:
                       AssetImage('assets/images/lyric_play_next_click.png'),
                 ),
@@ -534,6 +540,7 @@ class _PlaySongPageState extends State<PlaySongPage>
                   Navigator.of(context).pop();
                 } else {
                   playModel.setSongListIndex(index);
+                  playModel.setAutoPlay(true);
                 }
               }
             },

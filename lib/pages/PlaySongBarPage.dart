@@ -162,6 +162,7 @@ class PlaySongBarPage extends StatelessWidget{
           if (index != null) {
             if (index > -2) {
               playModel.setSongListIndex(index);
+              playModel.setAutoPlay(true);
             }
           }
         }

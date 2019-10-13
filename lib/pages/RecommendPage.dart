@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:qqmusic/component/AppBarSearch.dart';
+import 'package:qqmusic/pages/DataAppPage.dart';
 
 class RecommendPage extends StatefulWidget {
   @override 
@@ -80,6 +81,15 @@ class _RecommendPageState extends State<RecommendPage> with AutomaticKeepAliveCl
                 onPressed: handlePresseSearch,
               ),
               Text('data'),
+              FlatButton(
+                child: Text("sqflite"),
+                onPressed: () {
+                  Navigator.push( context,
+                    MaterialPageRoute(builder: (context) {
+                        return DataAppPage();
+                    }));
+                },
+              ),
               FlatButton(
                 child: Text("拍照"),
                 onPressed: () {

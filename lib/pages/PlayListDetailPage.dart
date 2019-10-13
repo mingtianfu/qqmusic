@@ -140,6 +140,7 @@ class _PlayListDetailPageState extends State<PlayListDetailPage>
           onTap: () {
             playModel.setSongList(songList);
             playModel.setSongListIndex(0);
+            playModel.setAutoPlay(true);
           },
           child: child,
         );
@@ -215,6 +216,7 @@ class _PlayListDetailPageState extends State<PlayListDetailPage>
                   onTap: () {
                     playModel.setSongList(songList);
                     playModel.setSongListIndex(index);
+                    playModel.setAutoPlay(true);
                   },
                   child: Row(
                     children: <Widget>[

@@ -261,6 +261,7 @@ class _TestPageState extends State<SingerDetailPage> with SingleTickerProviderSt
           onTap: () {
             playModel.setSongList(songList);
             playModel.setSongListIndex(0);
+            playModel.setAutoPlay(true);
           },
           child: child,
         );
@@ -338,6 +339,7 @@ class _TestPageState extends State<SingerDetailPage> with SingleTickerProviderSt
                         onTap: () {
                           playModel.setSongList(songList);
                           playModel.setSongListIndex(index);
+                          playModel.setAutoPlay(true);
                         },
                         child: Row(
                           children: <Widget>[

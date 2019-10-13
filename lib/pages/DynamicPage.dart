@@ -32,15 +32,17 @@ class _DynamicPageState extends State<DynamicPage>  with TickerProviderStateMixi
           child: Container(
             // width: MediaQuery.of(context).size.width,
             // height: MediaQuery.of(context).size.height-300,
-            child: Column(children: <Widget>[
-            AppBarDynamic(
-              title: '动态', 
-              rightImage: Image.asset('assets/images/discovery_add_follow_light.png', width: 30,),
-              onPressedRight: handleRecognize,
-              onPressedForward: handlePresseForward,
-              onPressedReverse: handlePresseReverse,
+            child: Column(
+              children: <Widget>[
+                AppBarDynamic(
+                  title: '动态', 
+                  rightImage: Image.asset('assets/images/discovery_add_follow_light.png', width: 30,),
+                  onPressedRight: handleRecognize,
+                  onPressedForward: handlePresseForward,
+                  onPressedReverse: handlePresseReverse,
+                ),
+              ],
             ),
-          ],),
           ),
         ),
       ),

@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:camera/camera.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qqmusic/component/Toast.dart';
+import 'package:qqmusic/models/al.dart';
+import 'package:qqmusic/models/ar.dart';
+import 'package:qqmusic/models/trackItem.dart';
+import 'package:qqmusic/pages/Database/ArHelper.dart';
+import 'package:qqmusic/pages/Database/SongListHelper.dart';
 import 'package:qqmusic/pages/DynamicPage.dart';
 import 'package:qqmusic/pages/ListenPage.dart';
 import 'package:qqmusic/pages/LyricPage.dart';
@@ -26,6 +30,7 @@ import 'package:qqmusic/pages/TopListPage.dart';
 import 'package:flutter_ijkplayer/flutter_ijkplayer.dart';
 import 'package:qqmusic/utils/HttpUtils.dart';
 import 'package:qqmusic/utils/hexToColor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'CameraPage.dart';
 
@@ -55,6 +60,7 @@ class _AppState extends State<App> with TickerProviderStateMixin{
   int _selectedIndex =  0;
   List _songList;
   int _songListIndex;
+  bool _autoPlay = false;
 
   final _pageList = [
     MusichallPage(),
@@ -79,7 +85,7 @@ class _AppState extends State<App> with TickerProviderStateMixin{
     // WidgetsBinding.instance.addPostFrameCallback((callback){
     //   Provider.of<CounterModel>(context).increment();
     // });
-
+    _getDataFromDb();
     subscriptPlayFinish();
     // animationController = new AnimationController(vsync: this, duration: Duration(seconds: 10))
     // ..addListener(() {
@@ -104,6 +110,7 @@ class _AppState extends State<App> with TickerProviderStateMixin{
        setState(() {
           _songList = playModel.songList;
           _songListIndex = playModel.songListIndex;
+          _autoPlay = playModel.autoPlay;
         });
        _audioPlayer.stop();
     } else {
@@ -111,28 +118,67 @@ class _AppState extends State<App> with TickerProviderStateMixin{
         setState(() {
           _songList = playModel.songList;
           _songListIndex = playModel.songListIndex;
+          _autoPlay = playModel.autoPlay;
         });
         _initAudioPlayer();
       } else if (playModel.songList != this._songList && playModel.songListIndex == this._songListIndex) {
         setState(() {
           _songList = playModel.songList;
+          _autoPlay = playModel.autoPlay;
         });
         _initAudioPlayer();
       }else if (playModel.songList == this._songList && playModel.songListIndex != this._songListIndex) {
         setState(() {
           _songListIndex = playModel.songListIndex;
+          _autoPlay = playModel.autoPlay;
         });
         _initAudioPlayer();
       }
     }
+    print(playModel.songList.length);
   }
 
   @override
   void dispose() {
     _playFinishStream?.cancel();
     _audioPlayer.dispose();
-    // animationController.dispose();
     super.dispose();
+  }
+
+  _getDataFromDb() async {
+    var db = SongListHelper();
+    var dbAr = ArHelper();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<TrackItem> _datas = [];
+    List datas = await db.getTotalList();
+    if (datas.length > 0) {
+      for(int i = 0; i < datas.length; i++){
+        Song item = Song.fromMap(datas[i]);
+        TrackItem trackItem = TrackItem();
+        Ar ar = Ar();
+        Al al = Al();
+        trackItem.name = item.name;
+        trackItem.id = item.id;
+        trackItem.ar = [];
+        al.picUrl = item.picUrl;
+        trackItem.al = al;
+        ArItem aa = await dbAr.getItem(item.arId);
+        if (aa != null) {
+          ar.name = aa.name;
+          ar.id = aa.id;
+          trackItem.ar.add(ar);
+        }
+        _datas.add(trackItem);
+      }
+      
+      WidgetsBinding.instance.addPostFrameCallback((callback){
+        Provider.of<PlayModel>(context).setSongList(_datas);
+        Provider.of<PlayModel>(context).setSongListIndex(prefs.getInt('songListIndex')??0);
+        Provider.of<PlayModel>(context).setAutoPlay(false);
+      });
+    }
+    setState(() {
+    });
   }
 
   _initAudioPlayer() async {
@@ -143,8 +189,11 @@ class _AppState extends State<App> with TickerProviderStateMixin{
       if (data['code'] == 200 && data['data'][0]['url'] != null) {
         await _audioPlayer.setNetworkDataSource(
           data['data'][0]['url'],
-          autoPlay: true
+          autoPlay: false
         );
+        if (_autoPlay) {
+          _audioPlayer.play();
+        }
         _getLyric(id);
       } else {
         print('当前不能播放，自动下一首');
@@ -261,6 +310,16 @@ class _AppState extends State<App> with TickerProviderStateMixin{
       theme: new ThemeData(
         primarySwatch: Colors.green,
       ),
+      // onGenerateRoute:(RouteSettings settings){
+      //   print(settings.name);
+      //   return MaterialPageRoute(
+      //     builder: (context){
+      //     String routeName = settings.name;
+      //     // 如果访问的路由页需要登录，但当前未登录，则直接返回登录页路由，
+      //     // 引导用户登录；其它情况则正常打开路由。
+      //   }
+      //   );
+      // },
       routes: {
         'searchPage': (context) => SearchPage(
           audioPlayer: _audioPlayer,
