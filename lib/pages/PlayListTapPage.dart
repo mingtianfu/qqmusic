@@ -9,6 +9,13 @@ import 'package:qqmusic/utils/HttpUtils.dart';
 import 'package:qqmusic/utils/hexToColor.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+class CateTab {
+  String cate;
+  num index;
+  List<PlaylistItem> list;
+  CateTab(this.cate, this.index, this.list);
+}
+
 class PlayListTapPage extends StatefulWidget {
   PlayListTapPage({Key key, this.audioPlayer, this.handleTap}): super(key: key);
   final IjkMediaController audioPlayer;
@@ -24,32 +31,32 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
   Color _color = hexToColor('#31c27c');
   TabController _tabController; //需要定义一个Controller
   ScrollController _scrollController = ScrollController(); //listview的控制器
-  List<String> tabs = ['全部', '流行', '华语', '摇滚', '民谣', '说唱', '电子', '轻音乐'];
-  List<int> tabsIndex = [0, 0, 0, 0, 0, 0, 0, 0];
   bool isMore = false;
-  Map tabsList = {
-    '全部': List<PlaylistItem>(),
-    '流行': List<PlaylistItem>(),
-    '华语': List<PlaylistItem>(),
-    '摇滚': List<PlaylistItem>(),
-    '民谣': List<PlaylistItem>(),
-    '说唱': List<PlaylistItem>(),
-    '电子': List<PlaylistItem>(),
-    '轻音乐': List<PlaylistItem>(),
-  };
   int activeIndex = 0;
   List<PlaylistItem> list = List<PlaylistItem>();
+  List tabsList = new List();
+  //定义tab页基本数据结构
+  final List<CateTab> cateTab = <CateTab>[
+    new CateTab('全部', 0, List<PlaylistItem>()),
+    new CateTab('流行', 0, List<PlaylistItem>()),
+    new CateTab('华语', 0, List<PlaylistItem>()),
+    new CateTab('摇滚', 0, List<PlaylistItem>()),
+    new CateTab('民谣', 0, List<PlaylistItem>()),
+    new CateTab('说唱', 0, List<PlaylistItem>()),
+    new CateTab('电子', 0, List<PlaylistItem>()),
+    new CateTab('轻音乐', 0, List<PlaylistItem>()),
+  ];
 
   @override
   void initState() {
     super.initState();
     // 创建Controller  
-    _tabController = TabController(length: tabs.length, vsync: this);
+    _tabController = TabController(length: cateTab.length, vsync: this);
     _tabController.addListener((){  
       setState(() {
         activeIndex = _tabController.index;
       });
-      if (tabsList[_tabController.index].length == 0) {
+      if (cateTab[activeIndex].list.length == 0) {
         getPersonalized();
       }
     });
@@ -64,15 +71,16 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
   }
 
   getPersonalized([String tag]) async {
+    
     try {
-      var result = await HttpUtils.request("/top/playlist?cat=${tabs[activeIndex]}&offset=${tabsIndex[activeIndex]}&limit=30");
+      var result = await HttpUtils.request("/top/playlist?cat=${cateTab[activeIndex].cate}&offset=${cateTab[activeIndex].index}&limit=30");
       // print(result);
         Playlist playlist = Playlist.fromJson(json.decode(result));
         if (playlist.code == 200 && playlist.playlists.length > 0) {
+          List<PlaylistItem> l = playlist.playlists;
           setState(() {
-            tabsIndex[activeIndex] = 0;
-            tabsList[activeIndex] = playlist.playlists;
-            list = playlist.playlists;
+            cateTab[activeIndex].index = 0;
+            cateTab[activeIndex].list = l;
           });
         } else {
           Toast.toast(context, '没有数据');
@@ -87,16 +95,15 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
       setState(() {
         isMore = true;
       });
-      int offset = tabsIndex[activeIndex] + 1;
-      var result = await HttpUtils.request("/top/playlist?cat=${tabs[activeIndex]}&offset=$offset&limit=30");
+      int offset = cateTab[activeIndex].index + 1;
+      var result = await HttpUtils.request("/top/playlist?cat=${cateTab[activeIndex].cate}&offset=$offset&limit=30");
       // print(result);
         Playlist playlist = Playlist.fromJson(json.decode(result));
         if (playlist.code == 200 && playlist.playlists.length > 0) {
           setState(() {
             isMore = false;
-            tabsIndex[activeIndex] = offset;
-            tabsList[activeIndex].addAll(playlist.playlists);
-            list.addAll(playlist.playlists);
+            cateTab[activeIndex].index = offset;
+            cateTab[activeIndex].list.addAll(playlist.playlists);
           });
         } else {
           Toast.toast(context, '没有数据');
@@ -130,30 +137,41 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
         bottom: _bottomTab(),
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: <Widget>[
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: tabs.map((e) { //创建3个Tab页
-                  return RefreshIndicator(
-                    onRefresh: _onRefresh,
-                    child: Container(
-                      alignment: Alignment.topLeft,
-                      padding: EdgeInsets.all(15.0),
-                      child: _tabBarViewContext(),
+            Container(
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: cateTab.map((e) { //创建3个Tab页
+                        return RefreshIndicator(
+                          onRefresh: _onRefresh,
+                          child: Container(
+                            alignment: Alignment.topLeft,
+                            padding: EdgeInsets.all(15.0),
+                            child: _tabBarViewContext(),
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ],
               ),
             ),
-            Hero(
-              tag: "PlaySongBarPage", //唯一标记，前后两个路由页Hero的tag必须相同
-              child: PlaySongBarPage(
-                audioPlayer: widget.audioPlayer,
-                handleTap: widget.handleTap,
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Hero(
+                tag: "PlaySongBarPage", //唯一标记，前后两个路由页Hero的tag必须相同
+                child: PlaySongBarPage(
+                  audioPlayer: widget.audioPlayer,
+                  handleTap: widget.handleTap,
+                ),
               ),
-            )
+            ),
           ],
         ),
         
@@ -183,8 +201,8 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
                 fontWeight: FontWeight.normal,
               ),
               controller: _tabController,
-              tabs: tabs.map((item) => Tab(
-                child: Text(item),
+              tabs: cateTab.map((item) => Tab(
+                child: Text(item.cate),
               )).toList(),
             ),
           ),
@@ -229,8 +247,7 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            // children: tabsList[activeIndex].map((item) => _item(item.coverImgUrl, item.name)).toList(),
-            children: list.map((item) => _item(item.coverImgUrl, item.name, item.id)).toList(),
+            children: cateTab[activeIndex].list.map((item) => _item(item.coverImgUrl, item.name, item.id)).toList(),
           ),
         ),
         isMore ? Container(

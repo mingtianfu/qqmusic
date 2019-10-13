@@ -357,7 +357,6 @@ class _AppState extends State<App> with TickerProviderStateMixin{
             )
           ),
         ),
-        // 'playSongPage': (context) => PlaySongPage(audioPlayer: _audioPlayer),
         'topListPage': (context) => TopListPage(),
         'singersList': (context) => SingersList(
           audioPlayer: _audioPlayer,

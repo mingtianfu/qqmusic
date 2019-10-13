@@ -116,95 +116,88 @@ class _TopListPageState extends State<TopListPage> {
         children: <Widget>[
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(left: 10),
+              padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('${_list[index].name}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                  _list[index].tracks.length == 0 ? Text('') 
-                  :Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '1. ',
+                  Text('${_list[index].name}',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Expanded(
+                    child: _list[index].tracks.length == 0 ? Text('') 
+                    : Row(
+                      children: <Widget>[
+                        Text(
+                          "1. ${_list[index].tracks[0].first}",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                          ),
                         ),
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "${_list[index].tracks[0].first}",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 14,
-                              ),  
+                        Expanded(
+                          child: Text(
+                            " - ${_list[index].tracks[0].second}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14,
                             ),
-                            TextSpan(
-                              text: "- ${_list[index].tracks[0].second}",
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 14,
-                              ),  
-                            )
-                          ]  
+                          ),
                         ),
-                      ]
-                    )
+                      ],
+                    ),
                   ),
                   _list[index].tracks.length == 0 ? Text('') 
-                  :Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '2. ',
+                  :Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          "2. ${_list[index].tracks[1].first}",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                          ),
                         ),
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "${_list[index].tracks[1].first}",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 14,
-                              ),  
+                        Expanded(
+                          child: Text(
+                            " - ${_list[index].tracks[1].second}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14,
                             ),
-                            TextSpan(
-                              text: "- ${_list[index].tracks[1].second}",
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 14,
-                              ),  
-                            )
-                          ]  
+                          ),
                         ),
-                      ]
-                    )
+                      ],
+                    ),
                   ),
                   _list[index].tracks.length == 0 ? Text('') 
-                  :Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '3. ',
+                  :Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          "3. ${_list[index].tracks[2].first}",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                          ),
                         ),
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "${_list[index].tracks[2].first}",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 14,
-                              ),  
+                        Expanded(
+                          child: Text(
+                            " - ${_list[index].tracks[2].second}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14,
                             ),
-                            TextSpan(
-                              text: "- ${_list[index].tracks[2].second}",
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 14,
-                              ),  
-                            )
-                          ]  
+                          ),
                         ),
-                      ]
-                    )
+                      ],
+                    ),
                   )
                 ],
               ),
