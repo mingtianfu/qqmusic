@@ -20,7 +20,6 @@ class PlayModel with ChangeNotifier {
   LyricContent get lyric => _lyric;
 
   void setSongList(List<TrackItem> list) {
-    print('setSongList');
     _songList = list;
     _setDatabase(list);
     notifyListeners();

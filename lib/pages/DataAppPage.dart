@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 
 class DataAppPage extends StatefulWidget {
   @override
@@ -10,284 +8,431 @@ class DataAppPage extends StatefulWidget {
 }
 
 class _DataAppPageState extends State<DataAppPage> {
-  List<User> _datas = new List();
-  var db = DatabaseHelper();
-  Future<Null> _refresh() async {
-    _query();
-  }
+ScrollController _controller;
+int _count = 10;
+bool _isLoding = false;
+bool _isRefreshing = false;
+String loadingText = "加载中.....";
 
-  @override
-  void initState() {
-    super.initState();
-    _getDataFromDb();
-  }
+@override
+void initState() {
+super.initState();
+_controller = ScrollController();
+}
 
-  _getDataFromDb() async {
-    List datas = await db.getTotalList();
-    if (datas.length > 0) {
-      //数据库有数据
-      datas.forEach((user) {
-        User item = User.fromMap(user);
-        _datas.add(item);
-      });
-    } else {
-      //数据库没有数据
-      User user = new User();
-      user.name = "张三";
-      user.age = 10;
-      user.id = 1;
+@override
+void dispose() {
+super.dispose();
+_controller.dispose();
+}
 
-      User user2 = new User();
-      user2.name = "李四";
-      user2.age = 12;
-      user2.id = 2;
-
-      await db.saveItem(user);
-      await db.saveItem(user2);
-
-      _datas.add(user);
-      _datas.add(user2);
-    }
-
-    setState(() {});
-  }
-
-//添加
-  Future<Null> _add() async {
-    User user = new User();
-    user.name = "我是增加的";
-    user.age = 33;
-    await db.saveItem(user);
-    _query();
-  }
-
-//删除,默认删除第一条数据
-  Future<Null> _delete() async {
-    List datas = await db.getTotalList();
-    if (datas.length > 0) {
-      //修改第一条数据
-      User user = User.fromMap(datas[0]);
-      db.deleteItem(user.id);
-      _query();
-    }
-
-  }
-
-//修改，默认修改第一条数据
-  Future<Null> _update() async {
-    List datas = await db.getTotalList();
-    if (datas.length > 0) {
-      //修改第一条数据
-      User u = User.fromMap(datas[0]);
-      u.name = "我被修改了";
-      db.updateItem(u);
-      _query();
-    }
-  }
-
-//查询
-  Future<Null> _query() async {
-    _datas.clear();
-    List datas = await db.getTotalList();
-    if (datas.length > 0) {
-      //数据库有数据
-      datas.forEach((user) {
-        User dataListBean = User.fromMap(user);
-        _datas.add(dataListBean);
-      });
-    }
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: AppBar(
-        title: Text("sqflite学习"),
-        centerTitle: true,
-        actions: <Widget>[
-          new PopupMenuButton(
-              onSelected: (String value) {
-                switch (value) {
-                  case "增加":
-                    _add();
-                    break;
-                  case "删除":
-                    _delete();
-                    break;
-                  case "修改":
-                    _update();
-                    break;
-                  case "查询":
-                    _query();
-                    break;
-                }
-              },
-              itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-                    new PopupMenuItem(value: "增加", child: new Text("增加")),
-                    new PopupMenuItem(value: "删除", child: new Text("删除")),
-                    new PopupMenuItem(value: "修改", child: new Text("修改")),
-                    new PopupMenuItem(value: "查询", child: new Text("查询")),
-                  ])
-        ],
+@override
+Widget build(BuildContext context) {
+return new MaterialApp(
+  home: Scaffold(
+    body: new Container(
+      child: new NotificationListener(
+        onNotification: (notification) {
+          if (notification is ScrollUpdateNotification &&
+              notification.depth == 0 &&
+              !_isLoding &&
+              !_isRefreshing) {
+            if (notification.metrics.pixels ==
+                notification.metrics.maxScrollExtent) {
+              setState(() {
+                _isLoding = true;
+                loadingText = "加载中.....";
+                _count += 10;
+              });
+              _refreshPull().then((value) {
+                print('加载成功.............');
+                setState(() {
+                  _isLoding = false;
+                });
+              }).catchError((error) {
+                print('failed');
+                setState(() {
+                  _isLoding = true;
+                  loadingText = "加载失败.....";
+                });
+              });
+            }
+          }
+        },
+        child: RefreshIndicator(
+          child: CustomScrollView(
+            controller: _controller,
+            physics: ScrollPhysics(),
+            slivers: <Widget>[
+              const SliverAppBar(
+                pinned: true,
+                title: const Text('复杂布局'),
+                   expandedHeight: 150.0,
+                   flexibleSpace: FlexibleSpaceBar(
+                     collapseMode: CollapseMode.parallax,
+                     title: Text(
+                       '复杂布局',
+                       style: TextStyle(fontSize: 16),
+                     ),
+                   ),
+                elevation: 10,
+                leading: Icon(Icons.arrow_back),
+              ),
+              // SliverToBoxAdapter(
+              //   child: Container(
+              //     height: 200,
+              //     child: new Swiper(
+              //       itemBuilder: (BuildContext context, int index) {
+              //         return new Image.network(
+              //           "http://pic37.nipic.com/20140113/8800276_184927469000_2.png",
+              //           fit: BoxFit.fill,
+              //         );
+              //       },
+              //       itemCount: 3,
+              //       pagination: new SwiperPagination(),
+              //     ),
+              //   ),
+              // ),
+              new SliverToBoxAdapter(
+                child: new Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: new Column(
+                    children: <Widget>[
+                      new SizedBox(
+                          child: new Text(
+                        'SliverGrid',
+                        style: new TextStyle(fontSize: 16),
+                      )),
+                      new Divider(
+                        color: Colors.grey,
+                        height: 20,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SliverGrid(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200.0,
+                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 10.0,
+                  childAspectRatio: 4.0,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return Container(
+                      alignment: Alignment.center,
+                      color: Colors.teal[100 * (index % 9)],
+                      child: Text('SliverGrid item $index'),
+                    );
+                  },
+                  childCount: _count,
+                ),
+              ),
+              new SliverToBoxAdapter(
+                  child: new Container(
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                color: Colors.green,
+                child: new SizedBox(
+                    child: new Text(
+                  'SliverFixedExtentList',
+                  style: new TextStyle(fontSize: 16),
+                )),
+              )),
+              SliverFixedExtentList(
+                itemExtent: 50.0,
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return Container(
+                      alignment: Alignment.center,
+                      color: Colors.lightBlue[100 * (index % 9)],
+                      child: Text('SliverFixedExtentList item $index'),
+                    );
+                  },
+                  childCount: _count + 20,
+                ),
+              ),
+              new SliverToBoxAdapter(
+                  child: new Container(
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                color: Colors.green,
+                child: new SizedBox(
+                    child: new Text(
+                  'SliverGrid',
+                  style: new TextStyle(fontSize: 16),
+                )),
+              )),
+              SliverGrid(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200.0,
+                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 10.0,
+                  childAspectRatio: 4.0,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return Container(
+                      alignment: Alignment.center,
+                      color: Colors.teal[100 * (index % 9)],
+                      child: Text('SliverGrid item2 $index'),
+                    );
+                  },
+                  childCount: _count + 10,
+                ),
+              ),
+              new SliverToBoxAdapter(
+                child: new Visibility(
+                  child: new Container(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: new Center(
+                      child: new Text(loadingText),
+                    ),
+                  ),
+                  visible: _isLoding,
+                ),
+              ),
+            ],
+          ),
+          onRefresh: () {
+            if (_isLoding) return null;
+            return _refreshPull().then((value) {
+              print('success');
+              setState(() {
+                _count += 10;
+              });
+            }).catchError((error) {
+              print('failed');
+            });
+          },
+        ),
       ),
-      body: RefreshIndicator(
-        displacement: 15,
-        onRefresh: _refresh,
-        child: ListView.separated(
-            itemBuilder: _renderRow,
-            physics: new AlwaysScrollableScrollPhysics(),
-            separatorBuilder: (BuildContext context, int index) {
-              return Container(
-                height: 0.5,
-                color: Colors.black38,
-              );
-            },
-            itemCount: _datas.length),
-      ),
-    );
-  }
+    ),
+  ),
+);
+}
 
-  Widget _renderRow(BuildContext context, int index) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-            padding: EdgeInsets.all(5),
-            child: Text("姓名：" + _datas[index].name)),
-        Padding(
-            padding: EdgeInsets.all(5),
-            child: Text("年龄：" + _datas[index].age.toString())),
-      ],
-    );
+Future<String> _refreshPull() async {
+  await Future.delayed(new Duration(seconds: 3));
+    return "_refreshPull";
   }
 }
 
-class User {
-  String name;
-  int age;
-  int id;
+  // var list = [];
+  // int page = 0;
+  // bool isLoading = false;//是否正在请求新数据
+  // bool showMore = false;//是否显示底部加载中提示
+  // bool offState = false;//是否显示进入页面时的圆形进度条
 
-  Map<String, dynamic> toMap() {
-    var map = new Map<String, dynamic>();
-    map['name'] = name;
-    map['age'] = age;
-    map['id'] = id;
-    return map;
-  }
+  // ScrollController scrollController = ScrollController();
 
-  static User fromMap(Map<String, dynamic> map) {
-    User user = new User();
-    user.name = map['name'];
-    user.age = map['age'];
-    user.id = map['id'];
-    return user;
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   scrollController.addListener(() {
+  //     if (scrollController.position.pixels ==
+  //         scrollController.position.maxScrollExtent) {
+  //       print('滑动到了最底部${scrollController.position.pixels}');
+  //       setState(() {
+  //         showMore = true;
+  //       });
+  //       getMoreData();
+  //     }
+  //   });
+  //   getListData();
+  // }
 
-  static List<User> fromMapList(dynamic mapList) {
-    List<User> list = new List(mapList.length);
-    for (int i = 0; i < mapList.length; i++) {
-      list[i] = fromMap(mapList[i]);
-    }
-    return list;
-  }
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     home: Scaffold(
+  //         appBar: AppBar(
+  //           title: Text("RefreshIndicator"),
+  //         ),
+  //         body: Stack(
+  //           children: <Widget>[
+  //             RefreshIndicator(
+  //               child: ListView.builder(
+  //                 controller: scrollController,
+  //                 itemCount: list.length + 1,//列表长度+底部加载中提示
+  //                 itemBuilder: choiceItemWidget,
+  //               ),
+  //               onRefresh: _onRefresh,
+  //             ),
+  //             Offstage(
+  //               offstage: offState,
+  //               child: Center(
+  //                 child: CircularProgressIndicator(),
+  //               ),
+  //             ),
+  //           ],
+  //         )
+  //     ),
+  //   );
+  // }
 
-}
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   //手动停止滑动监听
+  //   scrollController.dispose();
+  // }
 
-class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper.internal();
-  factory DatabaseHelper() => _instance;
-  final String tableName = "table_user";
-  final String columnId = "id";
-  final String columnName = "name";
-  final String columnAge = "age";
-  static Database _db;
+  // /**
+  //  * 加载哪个子组件
+  //  */
+  // Widget choiceItemWidget(BuildContext context, int position) {
+  //   if (position < list.length) {
+  //     return HomeListItem(position, list[position], (position) {
+  //       debugPrint("点击了第$position条");
+  //     });
+  //   } else if (showMore) {
+  //     return showMoreLoadingWidget();
+  //   }else{
+  //     return null;
+  //   }
+  // }
 
-  Future<Database> get db async {
-    if (_db != null) {
-      return _db;
-    }
-    _db = await initDb();
-    return _db;
-  }
+  // /**
+  //  * 加载更多提示组件
+  //  */
+  // Widget showMoreLoadingWidget() {
+  //   return Container(
+  //     height: 50.0,
+  //     color: Colors.transparent,
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: <Widget>[
+  //         Text('加载中...', style: TextStyle(fontSize: 16.0),),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  DatabaseHelper.internal();
+  // /**
+  //  * 模拟进入页面获取数据
+  //  */
+  // void getListData() async {
+  //   if (isLoading) {
+  //     return;
+  //   }
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   await Future.delayed(Duration(seconds: 3), () {
+  //     setState(() {
+  //       isLoading = false;
+  //       offState = true;
+  //       list = List.generate(20, (i) {
+  //         return ItemInfo("ListView的一行数据$i");
+  //       });
+  //     });
+  //   });
+  // }
 
-  initDb() async {
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'sqflite.db');
-    var ourDb = await openDatabase(path, version: 1, onCreate: _onCreate);
-    return ourDb;
-  }
+  // /**
+  //  * 模拟到底部加载更多数据
+  //  */
+  // void getMoreData() async {
+  //   if (isLoading) {
+  //     return;
+  //   }
+  //   setState(() {
+  //     isLoading = true;
+  //     page++;
+  //   });
+  //   print('上拉刷新开始,page = $page');
+  //   await Future.delayed(Duration(seconds: 3), () {
+  //     setState(() {
+  //       isLoading = false;
+  //       showMore = false;
+  //       list.addAll(List.generate(3, (i) {
+  //         return ItemInfo("上拉添加ListView的一行数据$i");
+  //       }));
+  //       print('上拉刷新结束,page = $page');
+  //     });
+  //   });
+  // }
 
-  //创建数据库表
-  void _onCreate(Database db, int version) async {
-    await db.execute(
-        "create table $tableName($columnId integer primary key,$columnName text not null ,$columnAge integer not null )");
-    print("Table is created");
-  }
+  // /**
+  //  * 模拟下拉刷新
+  //  */
+  // Future < void > _onRefresh() async {
+  //   if (isLoading) {
+  //     return;
+  //   }
+  //   setState(() {
+  //     isLoading = true;
+  //     page = 0;
+  //   });
 
-//插入
-  Future<int> saveItem(User user) async {
-    var dbClient = await db;
-    int res = await dbClient.insert("$tableName", user.toMap());
-    return res;
-  }
+  //   print('下拉刷新开始,page = $page');
 
-  //查询
-  Future<List> getTotalList() async {
-    var dbClient = await db;
-    var result = await dbClient.rawQuery("SELECT * FROM $tableName ");
-    return result.toList();
-  }
+  //   await Future.delayed(Duration(seconds: 3), () {
+  //     setState(() {
+  //       isLoading = false;
 
-  //查询总数
-  Future<int> getCount() async {
-    var dbClient = await db;
-    return Sqflite.firstIntValue(await dbClient.rawQuery(
-        "SELECT COUNT(*) FROM $tableName"
-    ));
-  }
+  //       List tempList = List.generate(3, (i) {
+  //         return ItemInfo("下拉添加ListView的一行数据$i");
+  //       });
+  //       tempList.addAll(list);
+  //       list = tempList;
+  //       print('下拉刷新结束,page = $page');
+  //     });
+  //   });
+  // }
+// }
 
-//按照id查询
-  Future<User> getItem(int id) async {
-    var dbClient = await db;
-    var result = await dbClient.rawQuery("SELECT * FROM $tableName WHERE id = $id");
-    if (result.length == 0) return null;
-    return User.fromMap(result.first);
-  }
+// class ItemInfo {
+//   String title;
+//   ItemInfo(this.title);
+// }
 
+// // 定义一个回调接口
+// typedef OnItemClickListener = void Function(int position);
 
-  //清空数据
-  Future<int> clear() async {
-    var dbClient = await db;
-    return await dbClient.delete(tableName);
-  }
+// class HomeListItem extends StatelessWidget {
+//   int position;
+//   ItemInfo iteminfo;
+//   OnItemClickListener listener;
 
+//   HomeListItem(this.position, this.iteminfo, this.listener);
 
-  //根据id删除
-  Future<int> deleteItem(int id) async {
-    var dbClient = await db;
-    return await dbClient.delete(tableName,
-        where: "$columnId = ?", whereArgs: [id]);
-  }
-
-  //修改
-  Future<int> updateItem(User user) async {
-    var dbClient = await db;
-    return await dbClient.update("$tableName", user.toMap(),
-        where: "$columnId = ?", whereArgs: [user.id]);
-  }
-
-  //关闭
-  Future close() async {
-    var dbClient = await db;
-    return dbClient.close();
-  }
-}
-
-
-// 作者：ngu2008
-// 链接：https://juejin.im/post/5c9dbbaa5188250f4d3a0866
-// 来源：掘金
-// 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+//   @override
+//   Widget build(BuildContext context) {
+//     var widget = Column(
+//       children: <Widget>[
+//         Container(
+//           child: Column(
+//             children: <Widget>[
+//               Row(
+//                 children: <Widget>[
+//                   Text(
+//                     iteminfo.title,
+//                     style: TextStyle(
+//                       fontSize: 15.0,
+//                       color: Color(0xff999999),
+//                     ),
+//                   )
+//                 ],
+//               ),
+//             ],
+//             mainAxisAlignment: MainAxisAlignment.center,
+//           ),
+//           height: 50.0,
+//           color: Color.fromARGB(255, 241, 241, 241),
+//           padding: EdgeInsets.only(left: 20.0),
+//         ),
+//         //用Container设置分割线
+//         Container(
+//           height: 1.0,
+//           color: Color.fromARGB(255, 230, 230, 230),
+//         )
+//         //分割线
+// //      Divider()
+//       ],
+//     );
+//     //InkWell点击的时候有水波纹效果
+//     return InkWell(onTap: () => listener(position), child: widget);
+//   }
+// }

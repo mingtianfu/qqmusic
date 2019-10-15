@@ -2,11 +2,15 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_easyrefresh/material_footer.dart';
+import 'package:flutter_easyrefresh/material_header.dart';
 import 'package:qqmusic/component/AppBarSearch.dart';
 import 'package:qqmusic/component/Toast.dart';
 import 'package:qqmusic/models/index.dart';
 import 'package:qqmusic/utils/HttpUtils.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class MusichallPage extends StatefulWidget {
   // MusichallPage({Key key, this.audioPlayer}): super(key: key);
@@ -16,7 +20,9 @@ class MusichallPage extends StatefulWidget {
 }
 
 class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveClientMixin{
-  
+  ScrollController _controller = new ScrollController();
+  bool show = false;
+
   List<Personalizeditem> personalizedList = [];
   List<BannerItem> bannerList = [];
   List<AlbumItem> albumList = [];
@@ -45,6 +51,7 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
     @override
   void dispose() {
     print('hall dispose');
+    _controller.dispose();
     super.dispose();
   }
 
@@ -112,24 +119,38 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
       child: Center(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 30.0),
-          child: Scrollbar( // 显示进度条
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  AppBarSearch(
-                    title: '音乐馆', 
-                    rightImage: Image.asset('assets/images/icon_menu_recognize_lyric.png', width: 30,),
-                    onPressedRight: handleRecognize,
-                    onPressed: handlePresseSearch,
+          child: Column(
+            children: <Widget>[
+              AppBarSearch(
+                title: '音乐馆', 
+                rightImage: Image.asset('assets/images/icon_menu_recognize_lyric.png', width: 30,),
+                onPressedRight: handleRecognize,
+                onPressed: handlePresseSearch,
+              ),
+              Expanded(
+                child: EasyRefresh(
+                  onRefresh: () async{
+                    
+                  },
+                  onLoad: () async {
+                    
+                  },
+                  child: Column(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          bannerList.length == 0 ? Text('') : _swiper(),
+                          _gridview(),
+                          _buildPersonalized(),
+                          _buildTopAlbum(),
+                          _buildTopAlbum(),
+                        ],
+                      )
+                    ],
                   ),
-                  bannerList.length == 0 ? Text('') : _swiper(),
-                  _gridview(),
-                  _buildPersonalized(),
-                  _buildTopAlbum(),
-                  _buildTopAlbum(),
-                ],
-              )
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       )

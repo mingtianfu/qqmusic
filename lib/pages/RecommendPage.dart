@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:qqmusic/component/AppBarSearch.dart';
+import 'package:qqmusic/pages/CustomSliverHeaderDemo.dart';
 import 'package:qqmusic/pages/DataAppPage.dart';
 
 class RecommendPage extends StatefulWidget {
@@ -81,6 +82,15 @@ class _RecommendPageState extends State<RecommendPage> with AutomaticKeepAliveCl
                 onPressed: handlePresseSearch,
               ),
               Text('data'),
+              FlatButton(
+                child: Text("CustomSliverHeaderDemo"),
+                onPressed: () {
+                  Navigator.push( context,
+                    MaterialPageRoute(builder: (context) {
+                        return CustomSliverHeaderDemo();
+                    }));
+                },
+              ),
               FlatButton(
                 child: Text("sqflite"),
                 onPressed: () {

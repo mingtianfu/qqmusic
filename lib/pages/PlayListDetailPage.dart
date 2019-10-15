@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ijkplayer/flutter_ijkplayer.dart';
 import 'package:provider/provider.dart';
@@ -311,6 +312,7 @@ class _PlayListDetailPageState extends State<PlayListDetailPage>
         children: <Widget>[
           Expanded(
             child: CustomScrollView(
+              dragStartBehavior: DragStartBehavior.down,
               controller: _controller,
               slivers: <Widget>[
                 SliverAppBar(

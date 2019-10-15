@@ -148,6 +148,7 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
                       children: cateTab.map((e) { //创建3个Tab页
                         return RefreshIndicator(
                           onRefresh: _onRefresh,
+                          displacement: 0,
                           child: Container(
                             alignment: Alignment.topLeft,
                             padding: EdgeInsets.all(15.0),
@@ -250,15 +251,20 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
             children: cateTab[activeIndex].list.map((item) => _item(item.coverImgUrl, item.name, item.id)).toList(),
           ),
         ),
-        isMore ? Container(
-          padding: const EdgeInsets.all(16.0),
+        isMore ? 
+        Container(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: Colors.grey[200], width: 1))
+          ),
+          padding: const EdgeInsets.only(top: 10, bottom: 40),
           alignment: Alignment.center,
           child: SizedBox(
               width: 24.0,
               height: 24.0,
               child: CircularProgressIndicator(strokeWidth: 2.0)
           ),
-        ) : Container(height: 0,),
+        ) 
+        : Container(height: 0,),
       ],
     );
   }

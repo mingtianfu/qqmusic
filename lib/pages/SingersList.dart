@@ -22,6 +22,9 @@ class _SingersListState extends State<SingersList> {
   List<Artist> _list = [];
   int offset = 0;
   bool isMore = false;
+  bool isLoading = false;//是否正在请求新数据
+  bool showMore = false;//是否显示底部加载中提示
+  bool offState = false;//是否显示进入页面时的圆形进度条
   ScrollController _scrollController = ScrollController(); //listview的控制器
 
   @override
@@ -29,6 +32,7 @@ class _SingersListState extends State<SingersList> {
     super.initState();
     getdata();
     _scrollController.addListener(() {
+      print(_scrollController.position);
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         print('滑动到了最底部');
@@ -54,6 +58,7 @@ class _SingersListState extends State<SingersList> {
           setState(() {
             _list = list;
             offset = 0;
+            offState = true;
           });
         } else {
           Toast.toast(context, '没有数据');
@@ -100,6 +105,12 @@ class _SingersListState extends State<SingersList> {
           children: <Widget>[
             Container(
               child: _buildContext()
+            ),
+            Offstage(
+              offstage: offState,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
             Positioned(
               bottom: 0,
@@ -157,6 +168,38 @@ class _SingersListState extends State<SingersList> {
               childCount:  _list.length,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+
+  // /**
+  //  * 加载哪个子组件
+  //  */
+  // Widget choiceItemWidget(BuildContext context, int position) {
+  //   if (position < list.length) {
+  //     return HomeListItem(position, list[position], (position) {
+  //       debugPrint("点击了第$position条");
+  //     });
+  //   } else if (showMore) {
+  //     return showMoreLoadingWidget();
+  //   }else{
+  //     return null;
+  //   }
+  // }
+
+  /**
+   * 加载更多提示组件
+   */
+  Widget showMoreLoadingWidget() {
+    return Container(
+      height: 50.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text('加载中...', style: TextStyle(fontSize: 16.0),),
         ],
       ),
     );

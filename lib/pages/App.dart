@@ -135,7 +135,6 @@ class _AppState extends State<App> with TickerProviderStateMixin{
         _initAudioPlayer();
       }
     }
-    print(playModel.songList.length);
   }
 
   @override
@@ -174,7 +173,6 @@ class _AppState extends State<App> with TickerProviderStateMixin{
       WidgetsBinding.instance.addPostFrameCallback((callback){
         Provider.of<PlayModel>(context).setSongList(_datas);
         Provider.of<PlayModel>(context).setSongListIndex(prefs.getInt('songListIndex')??0);
-        Provider.of<PlayModel>(context).setAutoPlay(false);
       });
     }
     setState(() {
@@ -191,10 +189,6 @@ class _AppState extends State<App> with TickerProviderStateMixin{
           data['data'][0]['url'],
           autoPlay: true
         );
-        if (_autoPlay) {
-          print(_autoPlay);
-          _audioPlayer.play();
-        }
         _getLyric(id);
       } else {
         print('当前不能播放，自动下一首');

@@ -57,7 +57,11 @@ class PlaySongBarPage extends StatelessWidget{
                 Positioned(
                   left: 15,
                   top: 14,
-                  child: _buildRotaeImage(playModel),
+                  child: RotaeImage(
+                    url: playModel.songList.length == 0 ? '' : playModel.songList[playModel.songListIndex].al.picUrl,
+                    size: 45.0
+                  )
+                  // _buildRotaeImage(playModel),
                   // ClipOval(
                   //   child: playModel.songList.length == 0 ? Image.asset('assets/images/player_album_cover_default.png', width: 45,)
                   //   : Image.network(
@@ -78,20 +82,11 @@ class PlaySongBarPage extends StatelessWidget{
   Widget _buildRotaeImage(playModel) {
     return StreamBuilder<VideoInfo>(
       builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData &&  snapshot.data.hasData && snapshot.data.isPlaying) {
-          return RotaeImage(
+        return RotaeImage(
           url: playModel.songList.length == 0 ? '' : playModel.songList[playModel.songListIndex].al.picUrl,
-          size: 45.0, animationController: animationController);
-        } else {
-          return ClipOval(
-            child: playModel.songList.length == 0 ? Image.asset('assets/images/player_album_cover_default.png', width: 45,)
-            : Image.network(
-              playModel.songList[playModel.songListIndex].al.picUrl + '?param=200y200',
-              width: 45,
-              height: 45,
-            ),
-          );
-        }
+          size: 45.0,
+          isPlay: snapshot.data.isPlaying
+        );
       },
       stream: audioPlayer?.videoInfoStream,
       initialData: audioPlayer?.videoInfo,
@@ -115,14 +110,12 @@ class PlaySongBarPage extends StatelessWidget{
     );
   }
 
-  Widget _buildBottomControll(VideoInfo info, playModel) {
+  Widget _buildBottomControll(VideoInfo info, PlayModel playModel) {
     return GestureDetector(
       onTap: () async {
         if (playModel.songList.length > 0) {
           await audioPlayer?.playOrPause();
-        //   info.isPlaying
-        //       ? animationController?.stop()
-        //       : animationController?.forward();
+          playModel.setAutoPlay(!info.isPlaying);
         }
       },
       child: Container(
