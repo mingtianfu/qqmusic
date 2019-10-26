@@ -167,10 +167,7 @@ class _PlayListTapPageState extends State<PlayListTapPage> with SingleTickerProv
               right: 0,
               child: Hero(
                 tag: "PlaySongBarPage", //唯一标记，前后两个路由页Hero的tag必须相同
-                child: PlaySongBarPage(
-                  audioPlayer: widget.audioPlayer,
-                  handleTap: widget.handleTap,
-                ),
+                child: PlaySongBarPage(),
               ),
             ),
           ],

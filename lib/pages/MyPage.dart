@@ -1,8 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qqmusic/component/AppBarSearch.dart';
+import 'package:qqmusic/component/SpinWave.dart';
+import 'package:qqmusic/component/SpinWaveFill.dart';
+import 'package:qqmusic/utils/hexToColor.dart';
 
 class MyPage extends StatefulWidget {
   @override 
@@ -11,10 +13,23 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> with SingleTickerProviderStateMixin{
 
-List<String> items = ["1", "2", "3", "4", "5"];
-//  List<String> items = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: true);
+  // AnimationController controller;
+  List<String> items = ["1", "2", "3", "4", "5"];
+  double percent = 0;
+  bool enablePullDown = true;
+  bool enablePullUp = true;
+
+  RefreshController _refreshController = RefreshController(initialRefresh: true);
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   void _onRefresh() async {
     // monitor network fetch
@@ -35,98 +50,94 @@ List<String> items = ["1", "2", "3", "4", "5"];
     _refreshController.loadComplete();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        // WaterDropHeader、ClassicHeader、CustomHeader、LinkHeader、MaterialClassicHeader、WaterDropMaterialHeader
-        header: CustomHeader(
-          builder: (BuildContext context,RefreshStatus mode){
-            return SpinKitWave(
-              size: 20,
-              color: Colors.green, 
-              type: SpinKitWaveType.start
-            );
-            // return Center(
-            //   child: Text(
-            //     mode == RefreshStatus.idle
-            //       ? "下拉刷新"
-            //       : mode==RefreshStatus.refreshing 
-            //         ? "刷新中..."
-            //         : mode==RefreshStatus.canRefresh
-            //           ? "可以松手了!"
-            //           : mode==RefreshStatus.completed
-            //             ? "刷新成功!" : "刷新失败"
-            //   )
-            // );
-          }
-        //  height: 45.0,
-        //  releaseText: '松开手刷新',
-        //  refreshingText: '刷新中',
-        //  completeText: '刷新完成',
-        //  failedText: '刷新失败',
-        //  idleText: '下拉刷新',
-        ),
+  void handlePresseSearch() {
+    print('搜索页面');
+  }
 
-        // ClassicFooter、CustomFooter、LinkFooter、LoadIndicator
-        footer: CustomFooter(
-          builder: (BuildContext context, LoadStatus mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Text("pull up load");
-            }
-            else if (mode == LoadStatus.loading) {
-              body = CupertinoActivityIndicator();
-            }
-            else if (mode == LoadStatus.failed) {
-              body = Text("Load Failed!Click retry!");
-            }
-            else {
-              body = Text("No more Data");
-            }
-            return Container(
-              height: 55.0,
-              child: Center(child: body),
-            );
-          },
-        ),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        onLoading: _onLoading,
-        child: ListView.builder(
-          itemBuilder: (c, i) => Card(child: Center(child: Text(items[i]))),
-          itemExtent: 100.0,
-          itemCount: items.length,
+  void handleRecognize() {
+    print('更多页面');
+  }
+  
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        child: Scrollbar(
+          child: SingleChildScrollView (
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  AppBarSearch(
+                    title: '我的', 
+                    rightImage: Image.asset('assets/images/fragment_my_music_more.png', width: 30,),
+                    onPressedRight: handleRecognize,
+                    onPressed: handlePresseSearch,
+                  ),
+                  _buildLogin(),
+                ],
+              ),
+            )
+          ),
         ),
       ),
     );
   }
-  // void handlePresseSearch() {
-  //   print('搜索页面');
-  // }
-
-  // void handleRecognize() {
-  //   print('更多页面');
-  // }
-
-  // child: Scrollbar(
-  //   child: SingleChildScrollView (
-  //     child: Center(
-  //       child: Column(
-  //         children: <Widget>[
-            
-  //           AppBarSearch(
-  //             title: '我的', 
-  //             rightImage: Image.asset('assets/images/fragment_my_music_more.png', width: 30,),
-  //             onPressedRight: handleRecognize,
-  //             onPressed: handlePresseSearch,
-  //           ),
-  //         ],
-  //       ),
-  //     )
-  //   ),
-  // )
   
+  Widget _buildLogin() {
+    return Container(
+      margin: EdgeInsets.only(right: 15, bottom: 10, left: 15),
+      padding: EdgeInsets.only(top: 15, bottom: 10,),
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+            onTap: (){
+              Navigator.of(context).pushNamed('loginPage');
+            },
+            child: ClipRRect( 
+              borderRadius: BorderRadius.circular(50),
+              child: Container(
+                width: 170,
+                height: 40,
+                color: primaryColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset('assets/images/not_login_default_image.png', width: 18,),
+                    Container(width: 10,),
+                    Text('立即登录', style: TextStyle(color: Colors.white, fontSize: 16),)
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(height: 10,),
+          Divider(height: 20,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('活动中心')
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('会员中心')
+                  ],
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
 }

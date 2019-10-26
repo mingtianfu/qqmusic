@@ -146,6 +146,7 @@ flutter:
     - assets/images/miniplayer_btn_radiolist_highlight.png
     - assets/images/icon_song_action_sheet_normal.png
     - assets/images/icon_song_action_sheet_up.png
+    - assets/images/not_login_default_image.png
 
     - assets/media/ll.mp3
     - assets/media/2.mp4

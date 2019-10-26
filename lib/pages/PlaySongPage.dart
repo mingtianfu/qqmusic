@@ -1,22 +1,21 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qqmusic/component/ImageButton.dart';
-import 'package:qqmusic/component/RotateImage.dart';
-import 'package:qqmusic/component/Toast.dart';
+// import 'package:qqmusic/component/RotateImage.dart';
+// import 'package:qqmusic/component/Toast.dart';
 import 'package:qqmusic/pages/LyricPage.dart';
 import 'package:qqmusic/pages/ModalBottomSheetListPage.dart';
 import 'package:qqmusic/pages/Model/PlayModel.dart';
+import 'package:qqmusic/pages/PlayNotification.dart';
 import 'package:qqmusic/utils/utils.dart';
 import 'package:flutter_ijkplayer/flutter_ijkplayer.dart';
 
 class PlaySongPage extends StatefulWidget {
-  PlaySongPage({Key key, this.audioPlayer}): super(key: key);
-  final IjkMediaController audioPlayer;
+  PlaySongPage({Key key}) : super(key: key);
   @override
   _PlaySongPageState createState() => _PlaySongPageState();
 }
@@ -33,7 +32,6 @@ class _PlaySongPageState extends State<PlaySongPage>
   // Color _backgroundColor = Color.fromRGBO(49, 193, 124, 1);
   final Color _color = hexToColor('#31c27c');
   int _selectedIndex = 2;
-
 
   @override
   void initState() {
@@ -110,7 +108,10 @@ class _PlaySongPageState extends State<PlaySongPage>
             // tags(),
             swiper(),
             // indicator(),
-            buildVideoInfoControll(),
+            Consumer<PlayModel>(
+                builder: (BuildContext context, PlayModel playModel, _) {
+              return buildVideoInfoControll(playModel);
+            }),
             bottomButtons(),
           ],
         ),
@@ -121,62 +122,62 @@ class _PlaySongPageState extends State<PlaySongPage>
   // 导航
   Widget appbar() {
     return Consumer<PlayModel>(
-      builder: (BuildContext context, PlayModel playModel, _) {
-        return Container(
-          height: MediaQuery.of(context).padding.top+40,
-          padding: EdgeInsets.only(
-            right: 15.0,
-          ),
-          child: Row(
-            children: <Widget>[
-              ImageButton(
-                height: 40,
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                assetImage: AssetImage('assets/images/player_btn_close_normal.png'),
-              ),
-              Expanded(
-                child: Padding(
-                    padding: EdgeInsets.only(right: 15.0),
-                    child: StreamBuilder<VideoInfo>(
-                      builder: (BuildContext context, snapshot) {
-                        if (!snapshot.hasData || !snapshot.data.hasData) {
-                          return Center(
-                            child: Text('加载中...',
-                                style: TextStyle(color: Colors.white)),
-                          );
-                        }
-                        return Text(
-                          playModel.songList.length == 0
+        builder: (BuildContext context, PlayModel playModel, _) {
+      return Container(
+        height: MediaQuery.of(context).padding.top + 40,
+        padding: EdgeInsets.only(
+          right: 15.0,
+        ),
+        child: Row(
+          children: <Widget>[
+            ImageButton(
+              height: 40,
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              assetImage:
+                  AssetImage('assets/images/player_btn_close_normal.png'),
+            ),
+            Expanded(
+              child: Padding(
+                  padding: EdgeInsets.only(right: 15.0),
+                  child: StreamBuilder<VideoInfo>(
+                    builder: (BuildContext context, snapshot) {
+                      if (!snapshot.hasData || !snapshot.data.hasData) {
+                        return Center(
+                          child: Text('加载中...',
+                              style: TextStyle(color: Colors.white)),
+                        );
+                      }
+                      return Text(
+                        playModel.songList.length == 0
                             ? ''
                             : '${playModel.songList[playModel.songListIndex].name}',
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white, fontSize: 16.0),
-                        );
-                      },
-                      stream: widget.audioPlayer?.videoInfoStream,
-                      initialData: widget.audioPlayer?.videoInfo,
-                    )),
-              ),
-              ImageButton(
-                width: 20,
-                height: 20,
-                onTap: handleBack,
-                assetImage: AssetImage(
-                    'assets/images/maintabbar_button_more_normal_white.png'),
-              ),
-            ],
-          ),
-        );
-      }
-    );
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                      );
+                    },
+                    stream: playModel.audioPlayer?.videoInfoStream,
+                    initialData: playModel.audioPlayer?.videoInfo,
+                  )),
+            ),
+            ImageButton(
+              width: 20,
+              height: 20,
+              onTap: handleBack,
+              assetImage: AssetImage(
+                  'assets/images/maintabbar_button_more_normal_white.png'),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   // 作者
-  Widget singer(inheritedTestModel) {
+  Widget singer(playModel) {
     return Container(
       height: 20,
       child: Row(
@@ -190,28 +191,30 @@ class _PlaySongPageState extends State<PlaySongPage>
                 assetImage: AssetImage(
                     'assets/images/abc_scrubber_track_mtrl_alpha.9.png'),
               )),
-          Container(
-            margin: EdgeInsets.only(left: 4.0, right: 4.0),
-            child: StreamBuilder<VideoInfo>(
-              builder: (BuildContext context, snapshot) {
-                if (!snapshot.hasData || !snapshot.data.hasData) {
-                  return Center(
-                    child:
-                        Text('加载中...', style: TextStyle(color: Colors.white)),
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(left: 4.0, right: 4.0),
+              child: StreamBuilder<VideoInfo>(
+                builder: (BuildContext context, snapshot) {
+                  if (!snapshot.hasData || !snapshot.data.hasData) {
+                    return Center(
+                      child:
+                          Text('加载中...', style: TextStyle(color: Colors.white)),
+                    );
+                  }
+                  return Text(
+                    playModel.songList.length == 0
+                        ? ''
+                        : '${playModel.songList[playModel.songListIndex].ar[0].name}',
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.white, fontSize: 12.0),
                   );
-                }
-                return Text(
-                  inheritedTestModel.songList.length == 0
-                      ? ''
-                      : '${inheritedTestModel.songList[inheritedTestModel.songListIndex].ar[0].name}',
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white, fontSize: 12.0),
-                );
-              },
-              stream: widget.audioPlayer?.videoInfoStream,
-              initialData: widget.audioPlayer?.videoInfo,
+                },
+                stream: playModel.audioPlayer?.videoInfoStream,
+                initialData: playModel.audioPlayer?.videoInfo,
+              ),
             ),
           ),
           Container(
@@ -265,33 +268,33 @@ class _PlaySongPageState extends State<PlaySongPage>
   // swiper
   Widget swiper() {
     return Consumer<PlayModel>(
-      builder: (BuildContext context, PlayModel playModel, _) {
-        return Expanded(
-          flex: 1,
-          child: playModel.songList.length == 0 
-          ? Text('暂无歌词')
-          : Center(
-            child: swiperLyric(playModel),
-          ),
-          // child: PageView.builder(
-          //   onPageChanged: (int index) {
-          //     setState(() {
-          //       _selectedIndex = index;
-          //     });
-          //   },
-          //   controller: _pageController,
-          //   itemCount: 3,
-          //   itemBuilder: (BuildContext context, int index) {
-          //     if (_selectedIndex == 0) {
-          //       return swipers0();
-          //     } else if (_selectedIndex == 1) {
-          //       return swipers1();
-          //     } else {
-          //       return swiperLyric();
-          //     }
-          //   },
-          // ),
-        );
+        builder: (BuildContext context, PlayModel playModel, _) {
+      return Expanded(
+        flex: 1,
+        child: playModel.songList.length == 0
+            ? Text('暂无歌词')
+            : Center(
+                child: swiperLyric(playModel),
+              ),
+        // child: PageView.builder(
+        //   onPageChanged: (int index) {
+        //     setState(() {
+        //       _selectedIndex = index;
+        //     });
+        //   },
+        //   controller: _pageController,
+        //   itemCount: 3,
+        //   itemBuilder: (BuildContext context, int index) {
+        //     if (_selectedIndex == 0) {
+        //       return swipers0();
+        //     } else if (_selectedIndex == 1) {
+        //       return swipers1();
+        //     } else {
+        //       return swiperLyric();
+        //     }
+        //   },
+        // ),
+      );
     });
   }
 
@@ -333,48 +336,59 @@ class _PlaySongPageState extends State<PlaySongPage>
         }
         return buildLyric(snapshot.data, playModel);
       },
-      stream: widget.audioPlayer?.videoInfoStream,
-      initialData: widget.audioPlayer?.videoInfo,
+      stream: playModel.audioPlayer?.videoInfoStream,
+      initialData: playModel.audioPlayer?.videoInfo,
     );
   }
 
   Widget buildLyric(VideoInfo info, playModel) {
-    TextStyle style = Theme.of(context).textTheme.body1.copyWith(height: 2.0, fontSize: 12, color: Colors.white);
+    TextStyle style = Theme.of(context)
+        .textTheme
+        .body1
+        .copyWith(height: 2.0, fontSize: 12, color: Colors.white);
     final normalStyle = style.copyWith(color: style.color.withOpacity(0.7));
-    return  (playModel.lyric == null || playModel.lyric.size == 0)
-      ? Text('无歌词', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))
-      : LayoutBuilder(builder: (context, constraints) {
-      //歌词顶部与尾部半透明显示
-      return ShaderMask(
-        shaderCallback: (rect) {
-          return ui.Gradient.linear(Offset(rect.width / 2, 0), Offset(rect.width / 2, constraints.maxHeight), [
-            const Color(0x00FFFFFF),
-            style.color,
-            style.color,
-            const Color(0x00FFFFFF),
-          ], [
-            0.0,
-            0.15,
-            0.85,
-            1
-          ]);
-        },
-        child: Container(
-          constraints: BoxConstraints(minWidth: 300, minHeight: 120),
-          child: LyricPage(
-            lyric: playModel.lyric,
-            lyricLineStyle: normalStyle,
-            highlight: style.color,
-            position: Duration(seconds: info.currentPosition.toInt()).inMilliseconds,
-            onTap: (position) {
-              widget.audioPlayer?.seekTo(double.parse(stamp2int(position).toString()));
-            },
-            size: Size(constraints.maxWidth-60, constraints.maxHeight == double.infinity ? 0 : constraints.maxHeight),
-            playing: info.isPlaying,
-          ),
-        ),
-      );
-    });
+    return (playModel.lyric == null || playModel.lyric.size == 0)
+        ? Text('无歌词',
+            textAlign: TextAlign.center, style: TextStyle(color: Colors.white))
+        : LayoutBuilder(builder: (context, constraints) {
+            //歌词顶部与尾部半透明显示
+            return ShaderMask(
+              shaderCallback: (rect) {
+                return ui.Gradient.linear(Offset(rect.width / 2, 0),
+                    Offset(rect.width / 2, constraints.maxHeight), [
+                  const Color(0x00FFFFFF),
+                  style.color,
+                  style.color,
+                  const Color(0x00FFFFFF),
+                ], [
+                  0.0,
+                  0.15,
+                  0.85,
+                  1
+                ]);
+              },
+              child: Container(
+                constraints: BoxConstraints(minWidth: 300, minHeight: 120),
+                child: LyricPage(
+                  lyric: playModel.lyric,
+                  lyricLineStyle: normalStyle,
+                  highlight: style.color,
+                  position: Duration(seconds: info.currentPosition.toInt())
+                      .inMilliseconds,
+                  onTap: (position) {
+                    playModel.audioPlayer
+                        ?.seekTo(double.parse(stamp2int(position).toString()));
+                  },
+                  size: Size(
+                      constraints.maxWidth - 60,
+                      constraints.maxHeight == double.infinity
+                          ? 0
+                          : constraints.maxHeight),
+                  playing: info.isPlaying,
+                ),
+              ),
+            );
+          });
   }
 
   // indicator
@@ -408,7 +422,7 @@ class _PlaySongPageState extends State<PlaySongPage>
     );
   }
 
-  Widget buildVideoInfoControll() {
+  Widget buildVideoInfoControll(playModel) {
     return StreamBuilder<VideoInfo>(
       builder: (BuildContext context, snapshot) {
         if (!snapshot.hasData || !snapshot.data.hasData) {
@@ -416,19 +430,19 @@ class _PlaySongPageState extends State<PlaySongPage>
             child: Text('加载中...', style: TextStyle(color: Colors.white)),
           );
         }
-        return buildInfo(snapshot.data);
+        return buildInfo(snapshot.data, playModel);
       },
-      stream: widget.audioPlayer?.videoInfoStream,
-      initialData: widget.audioPlayer?.videoInfo,
+      stream: playModel.audioPlayer?.videoInfoStream,
+      initialData: playModel.audioPlayer?.videoInfo,
     );
   }
 
-  Widget buildInfo(VideoInfo info) {
+  Widget buildInfo(VideoInfo info, playModel) {
     return Column(
       children: <Widget>[
-        timeSlider(info),
+        timeSlider(info, playModel),
         Consumer<PlayModel>(
-          builder: (BuildContext context, PlayModel playModel,  _) {
+          builder: (BuildContext context, PlayModel playModel, _) {
             return controllers(info, playModel);
           },
         ),
@@ -437,7 +451,7 @@ class _PlaySongPageState extends State<PlaySongPage>
   }
 
   // timeSlider
-  Widget timeSlider(VideoInfo info) {
+  Widget timeSlider(VideoInfo info, playModel) {
     return Container(
       height: 60,
       padding: EdgeInsets.only(left: 15.0, right: 15.0),
@@ -455,7 +469,7 @@ class _PlaySongPageState extends State<PlaySongPage>
               activeColor: Colors.white,
               inactiveColor: Colors.white30,
               onChanged: (value) {
-                widget.audioPlayer?.seekToProgress(value);
+                playModel.audioPlayer?.seekToProgress(value);
               },
               onChangeEnd: (value) {
                 // _audioPlayer.seekToProgress(value);
@@ -505,10 +519,7 @@ class _PlaySongPageState extends State<PlaySongPage>
                     height: 60,
                     onTap: () async {
                       if (playModel.songList.length > 0) {
-                        await widget.audioPlayer?.playOrPause();
-                        // info.isPlaying
-                        //     ? animationController?.stop()
-                        //     : animationController?.forward();
+                        PlayNotification().dispatch(context);
                       }
                     },
                     assetImage: AssetImage(info.isPlaying
@@ -619,5 +630,4 @@ class _PlaySongPageState extends State<PlaySongPage>
       },
     );
   }
-
 }

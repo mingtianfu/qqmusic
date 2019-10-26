@@ -4,26 +4,35 @@ import 'package:provider/provider.dart';
 import 'package:qqmusic/component/RotateImage.dart';
 import 'package:qqmusic/pages/ModalBottomSheetListPage.dart';
 import 'package:qqmusic/pages/Model/PlayModel.dart';
+import 'package:qqmusic/pages/PlayNotification.dart';
+import 'package:qqmusic/pages/PlaySongPage.dart';
 import 'package:qqmusic/utils/hexToColor.dart';
 
-class PlaySongBarPage extends StatelessWidget{
-  PlaySongBarPage({Key key, this.audioPlayer, this.handleTap, this.animationController}): super(key: key);
+class PlaySongBarPage extends StatelessWidget {
+  PlaySongBarPage({Key key, this.animationController}) : super(key: key);
 
-  final IjkMediaController audioPlayer;
-  final handleTap;
   final animationController;
   final Color _color = hexToColor('#31c27c');
-  
-  @override 
-  Widget build(BuildContext context) {
 
+  @override
+  Widget build(BuildContext context) {
     return Consumer<PlayModel>(
-      builder: (BuildContext context, PlayModel playModel,  _) {
-        return Container(
+        builder: (BuildContext context, PlayModel playModel, _) {
+      return Container(
           height: 66,
           color: Colors.transparent,
           child: GestureDetector(
-            onTap: playModel.songList.length > 0 ? handleTap : null,
+            onTap: () {
+              if (playModel.songList.length > 0) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) {
+                          return PlaySongPage();
+                        },
+                        fullscreenDialog: true));
+              }
+            },
             child: Stack(
               children: <Widget>[
                 Container(
@@ -36,61 +45,47 @@ class PlaySongBarPage extends StatelessWidget{
                       Expanded(
                         flex: 1,
                         child: Text(
-                            playModel.songList.length == 0
+                          playModel.songList.length == 0
                               ? 'QQ音乐 让生活充满音乐'
                               : '${playModel.songList[playModel.songListIndex].name}-${playModel.songList[playModel.songListIndex].ar[0].name}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: playModel.songList.length == 0 ? Colors.grey : Colors.black,
-                              fontWeight: FontWeight.normal,
-                              textBaseline: TextBaseline.alphabetic,
-                            ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: playModel.songList.length == 0
+                                ? Colors.grey
+                                : Colors.black,
+                            fontWeight: FontWeight.normal,
+                            textBaseline: TextBaseline.alphabetic,
                           ),
                         ),
-                      _buildBottomControllStream(playModel),
+                      ),
+                      RepaintBoundary(
+                        child: _buildBottomControllStream(playModel),
+                      ),
                       _buildList(context, playModel),
                     ],
                   ),
                 ),
                 Positioned(
-                  left: 15,
-                  top: 14,
-                  child: RotaeImage(
-                    url: playModel.songList.length == 0 ? '' : playModel.songList[playModel.songListIndex].al.picUrl,
-                    size: 45.0
-                  )
-                  // _buildRotaeImage(playModel),
-                  // ClipOval(
-                  //   child: playModel.songList.length == 0 ? Image.asset('assets/images/player_album_cover_default.png', width: 45,)
-                  //   : Image.network(
-                  //     playModel.songList[playModel.songListIndex].al.picUrl + '?param=200y200',
-                  //     width: 45,
-                  //     height: 45,
-                  //   ),
-                  // ),
-                ),
+                    left: 15,
+                    top: 14,
+                    child: RepaintBoundary(
+                      child: RotaeImage(
+                          url: playModel.songList.length == 0
+                              ? ''
+                              : playModel.songList[playModel.songListIndex].al
+                                          .picUrl !=
+                                      null
+                                  ? playModel.songList[playModel.songListIndex]
+                                      .al.picUrl
+                                  : '',
+                          size: 45.0),
+                    )),
               ],
             ),
-          )
-        );
-      }
-    );
-  }
-  
-  Widget _buildRotaeImage(playModel) {
-    return StreamBuilder<VideoInfo>(
-      builder: (BuildContext context, snapshot) {
-        return RotaeImage(
-          url: playModel.songList.length == 0 ? '' : playModel.songList[playModel.songListIndex].al.picUrl,
-          size: 45.0,
-          isPlay: snapshot.data.isPlaying
-        );
-      },
-      stream: audioPlayer?.videoInfoStream,
-      initialData: audioPlayer?.videoInfo,
-    );
+          ));
+    });
   }
 
   Widget _buildBottomControllStream(playModel) {
@@ -103,18 +98,18 @@ class PlaySongBarPage extends StatelessWidget{
             child: Image.asset('assets/images/minibar_btn_default_play.png'),
           );
         }
-        return _buildBottomControll(snapshot.data, playModel);
+        return _buildBottomControll(snapshot.data, playModel, context);
       },
-      stream: audioPlayer?.videoInfoStream,
-      initialData: audioPlayer?.videoInfo,
+      stream: playModel.audioPlayer?.videoInfoStream,
+      initialData: playModel.audioPlayer?.videoInfo,
     );
   }
 
-  Widget _buildBottomControll(VideoInfo info, PlayModel playModel) {
+  Widget _buildBottomControll(VideoInfo info, PlayModel playModel, context) {
     return GestureDetector(
       onTap: () async {
         if (playModel.songList.length > 0) {
-          await audioPlayer?.playOrPause();
+          PlayNotification().dispatch(context);
           playModel.setAutoPlay(!info.isPlaying);
         }
       },
@@ -149,28 +144,27 @@ class PlaySongBarPage extends StatelessWidget{
 
   Widget _buildList(context, playModel) {
     return GestureDetector(
-      onTap: () async {
-        if (playModel.songList.length > 0) {
-          int index = await _showModalBottomSheet(context, audioPlayer);
-          if (index != null) {
-            if (index > -2) {
-              playModel.setSongListIndex(index);
-              playModel.setAutoPlay(true);
+        onTap: () async {
+          if (playModel.songList.length > 0) {
+            int index = await _showModalBottomSheet(context);
+            if (index != null) {
+              if (index > -2) {
+                playModel.setSongListIndex(index);
+                playModel.setAutoPlay(true);
+              }
             }
           }
-        }
-      },
-      child: Image.asset(
-        playModel.songList.length == 0
-            ? 'assets/images/minibar_btn_default_playlist.png'
-            : 'assets/images/minibar_btn_playlist_highlight.png',
-        width: 30,
-        height: 30,
-      )
-    );
+        },
+        child: Image.asset(
+          playModel.songList.length == 0
+              ? 'assets/images/minibar_btn_default_playlist.png'
+              : 'assets/images/minibar_btn_playlist_highlight.png',
+          width: 30,
+          height: 30,
+        ));
   }
 
-  Future<int> _showModalBottomSheet(context, audioPlayer) {
+  Future<int> _showModalBottomSheet(context) {
     return showModalBottomSheet<int>(
       context: context,
       builder: (BuildContext context) {
@@ -178,5 +172,4 @@ class PlaySongBarPage extends StatelessWidget{
       },
     );
   }
-
 }

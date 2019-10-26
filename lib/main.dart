@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:qqmusic/pages/App.dart';
 import 'package:qqmusic/pages/Model/PlayModel.dart';
@@ -7,6 +8,12 @@ import 'package:camera/camera.dart';
 // void main() => runApp(App());
 
 Future<void>  main() async{
+  //  build阶段的调试
+//  debugProfileBuildsEnabled = true;
+//  //  paint阶段的调试
+//  debugProfilePaintsEnabled = true;
+//  debugPaintLayerBordersEnabled = true;
+
   List<CameraDescription> cameras;
   try {
     WidgetsFlutterBinding.ensureInitialized();

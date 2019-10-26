@@ -6,6 +6,7 @@ import 'package:flutter_ijkplayer/flutter_ijkplayer.dart';
 import 'package:provider/provider.dart';
 import 'package:qqmusic/component/Toast.dart';
 import 'package:qqmusic/models/index.dart';
+import 'package:qqmusic/pages/CustomSliverHeaderDemo.dart';
 import 'package:qqmusic/pages/Model/PlayModel.dart';
 import 'package:qqmusic/pages/PlaySongBarPage.dart';
 import 'package:qqmusic/utils/HttpUtils.dart';
@@ -183,10 +184,7 @@ class _TestPageState extends State<SingerDetailPage> with SingleTickerProviderSt
               right: 0,
               child: Hero(
                 tag: "PlaySongBarPage", //唯一标记，前后两个路由页Hero的tag必须相同
-                child: PlaySongBarPage(
-                  audioPlayer: widget.audioPlayer,
-                  handleTap: widget.handleTap,
-                ),
+                child: PlaySongBarPage(),
               ),
             ),
           ],
@@ -199,25 +197,35 @@ class _TestPageState extends State<SingerDetailPage> with SingleTickerProviderSt
     return new NestedScrollView(
       headerSliverBuilder: (context, bool) {
         return [
-          SliverAppBar(
-            backgroundColor: _selectColor,
-            elevation: 0,
-            pinned: true,
-            expandedHeight: 250.0,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                artist == null ? '' : artist.name
+          // SliverAppBar(
+          //   backgroundColor: Colors.transparent,
+          //   elevation: 0,
+          //   pinned: true,
+          //   expandedHeight: 250.0,
+          //   flexibleSpace: FlexibleSpaceBar(
+          //     title: Text(
+          //       artist == null ? '' : artist.name
+          //     ),
+          //     centerTitle: true,
+          //     background: artist == null 
+          //       ? Image.asset("assets/images/p.jpg", fit: BoxFit.cover,)
+          //       : CachedNetworkImage(
+          //         placeholder: (context, url) => Image.asset('assets/images/p.jpg', fit: BoxFit.cover,),
+          //         imageUrl: artist.picUrl,
+          //         fit: BoxFit.cover,
+          //       ),
+          //   ),
+          // ),
+          SliverPersistentHeader(
+              pinned: true,
+              delegate: SliverCustomHeaderDelegate(
+                title: artist == null ? '' : artist.name,
+                collapsedHeight: 40,
+                expandedHeight: 300,
+                paddingTop: MediaQuery.of(context).padding.top,
+                coverImgUrl: artist.picUrl
               ),
-              centerTitle: true,
-              background: artist == null 
-                ? Image.asset("assets/images/p.jpg", fit: BoxFit.cover,)
-                : CachedNetworkImage(
-                  placeholder: (context, url) => Image.asset('assets/images/p.jpg', fit: BoxFit.cover,),
-                  imageUrl: artist.picUrl,
-                  fit: BoxFit.cover,
-                ),
             ),
-          ),
           new SliverPersistentHeader(
             delegate: new SliverTabBarDelegate(
               new TabBar(

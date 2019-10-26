@@ -2,21 +2,26 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:qqmusic/component/AppBarSearch.dart';
 import 'package:qqmusic/component/HeaderWave.dart';
+import 'package:qqmusic/component/PullToRefreshNotification.dart';
+// import 'package:qqmusic/component/RefreshCustomScrollView/pull_to_refresh.dart';
+import 'package:qqmusic/component/SpinWave.dart';
 import 'package:qqmusic/component/Toast.dart';
 import 'package:qqmusic/models/index.dart';
 import 'package:qqmusic/utils/HttpUtils.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
 class MusichallPage extends StatefulWidget {
+  // MusichallPage({Key key, this.audioPlayer}): super(key: key);
+  // final IjkMediaController audioPlayer;
   @override 
   _MusichallPageState createState() => _MusichallPageState();
 }
 
 class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveClientMixin{
   ScrollController _controller = new ScrollController();
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  // RefreshController _refreshController = RefreshController(initialRefresh: true);
 
   List<Personalizeditem> personalizedList = [];
   List<BannerItem> bannerList = [];
@@ -114,7 +119,7 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
     await getPersonalized();
     await getTopAlbum();
     print('object');
-    _refreshController.refreshCompleted();
+    // _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
@@ -125,21 +130,15 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
       setState(() {
         
       });
-    _refreshController.loadComplete();
+    // _refreshController.loadComplete();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return NestedScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      key: PageStorageKey("q"),
-      // controller: _scrollController,
-      headerSliverBuilder: (c, s) => [
-        SliverAppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          pinned: false,
+    return PullToRefreshNotification(
+        onRefresh: _onRefresh,
+        appbar: SliverAppBar(
           title: GestureDetector(
             onTap: () => Navigator.of(context).pushNamed('searchPage'),
             child: Row(
@@ -178,31 +177,31 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
             ),
             Container(width: 15,)
           ],
+          backgroundColor: Colors.transparent,
+          pinned: false,
+          expandedHeight: 60,
+          // centerTitle: true,
         ),
-      ],
-      body: Container(
-        padding: EdgeInsets.only(top: 15),
-        child: SmartRefresher(
-          controller: _refreshController,
-          enablePullDown: true,
-          header: HeaderWave(),
-          enablePullUp: true,
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-          child: ListView(
-            children: <Widget>[
-              bannerList.length == 0 ? Container(height: 150,) : _swiper(),
-              _gridview(),
-              _buildPersonalized(),
-              _buildTopAlbum(),
-              _buildTopAlbum(),
-            ]
+        child: new SliverList(
+          delegate: new SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return new Container(
+                color: Colors.grey[50],
+                child: Column(
+                  children: <Widget>[
+                    bannerList.length == 0 ? Container(height: 150,) : _swiper(),
+                     _gridview(),
+                     _buildPersonalized(),
+                     _buildTopAlbum(),
+                     _buildTopAlbum(),
+                  ],
+                )
+              );
+            },
+            childCount: 1,
           ),
         ),
-      )
-    );
-
-        
+      );
     // SafeArea(
     //   child: Center(
     //     child: Padding(
@@ -312,11 +311,10 @@ class _MusichallPageState extends State<MusichallPage> with AutomaticKeepAliveCl
   }
 
   Widget _swiperBuilder(BuildContext context, int index) {
-    return CachedNetworkImage(
-      imageUrl: bannerList[index].imageUrl + '?param=200',
-      placeholder: (context, url) => Image.asset('assets/images/player_album_cover_default.png'),
+    return (Image.network(
+      bannerList[index].imageUrl,
       fit: BoxFit.fill,
-    );
+    ));
   }
 
   Widget _gridview () {

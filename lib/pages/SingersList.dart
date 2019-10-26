@@ -52,17 +52,17 @@ class _SingersListState extends State<SingersList> {
     try {
       var result = await HttpUtils.request("/top/artists?offset=$offset&limit=30");
       var data = json.decode(result);
-        if (data['code'] == 200 && data['artists'].length > 0) {
-          List responseJson = data['artists'];
-          List<Artist> list = responseJson.map((m) => new Artist.fromJson(m)).toList();
-          setState(() {
-            _list = list;
-            offset = 0;
-            offState = true;
-          });
-        } else {
-          Toast.toast(context, '没有数据');
-        }
+      if (data['code'] == 200 && data['artists'].length > 0) {
+        List responseJson = data['artists'];
+        List<Artist> list = responseJson.map((m) => new Artist.fromJson(m)).toList();
+        setState(() {
+          _list = list;
+          offset = 0;
+          offState = true;
+        });
+      } else {
+        Toast.toast(context, '没有数据');
+      }
     } catch (e) {
       print(e);
     }
@@ -118,10 +118,7 @@ class _SingersListState extends State<SingersList> {
               right: 0,
               child: Hero(
                 tag: "PlaySongBarPage", //唯一标记，前后两个路由页Hero的tag必须相同
-                child: PlaySongBarPage(
-                  audioPlayer: widget.audioPlayer,
-                  handleTap: widget.handleTap,
-                ),
+                child: PlaySongBarPage(),
               ),
             ),
           ],

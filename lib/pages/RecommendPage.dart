@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:qqmusic/component/AppBarSearch.dart';
+import 'package:qqmusic/pages/PositionedTransitionPage.dart';
 import 'package:qqmusic/pages/CustomSliverHeaderDemo.dart';
 import 'package:qqmusic/pages/DataAppPage.dart';
 
@@ -81,7 +82,26 @@ class _RecommendPageState extends State<RecommendPage> with AutomaticKeepAliveCl
                 onPressedRight: handleRecognize,
                 onPressed: handlePresseSearch,
               ),
+            
               Text('data'),
+              FlatButton(
+                child: Text("PositionedTransitionPage"),
+                onPressed: () {
+                  Navigator.push( context,
+                    MaterialPageRoute(builder: (context) {
+                        return PositionedTransitionPage();
+                    }));
+                },
+              ),
+              // FlatButton(
+              //   child: Text("PullToRefreshNotification"),
+              //   onPressed: () {
+              //     Navigator.push( context,
+              //       MaterialPageRoute(builder: (context) {
+              //           return PullToRefreshNotification();
+              //       }));
+              //   },
+              // ),
               FlatButton(
                 child: Text("CustomSliverHeaderDemo"),
                 onPressed: () {

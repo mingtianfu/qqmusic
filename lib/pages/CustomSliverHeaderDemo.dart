@@ -1,26 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+class CustomSliverHeaderDemo extends StatefulWidget {
+  @override 
+  CustomSliverHeaderDemoState createState() => CustomSliverHeaderDemoState();
+}
 
-class CustomSliverHeaderDemo extends StatelessWidget {
+class CustomSliverHeaderDemoState extends State<CustomSliverHeaderDemo> {
+
+  ScrollController _controller = ScrollController(initialScrollOffset: -100);
+
+  @override
+  void initState() {
+    super.initState();
+      //监听滚动事件，打印滚动位置
+    _controller.addListener(() {
+      print(_controller.offset); //打印滚动位置
+      if (_controller.offset > 300) {
+        _controller.jumpTo(10);
+      }
+    });
+  }
+  
+  @override
+  void dispose() {
+    //为了避免内存泄露，需要调用_controller.dispose
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: SliverCustomHeaderDelegate(
-              title: '哪吒之魔童降世',
-              collapsedHeight: 40,
-              expandedHeight: 300,
-              paddingTop: MediaQuery.of(context).padding.top,
-              coverImgUrl: 'https://img.zcool.cn/community/01c6615d3ae047a8012187f447cfef.jpg@1280w_1l_2o_100sh.jpg'
+      body: Scrollbar(
+        child: CustomScrollView(
+          controller: _controller,
+          slivers: <Widget>[
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: SliverCustomHeaderDelegate(
+                title: '哪吒之魔童降世',
+                collapsedHeight: 40,
+                expandedHeight: 300,
+                paddingTop: MediaQuery.of(context).padding.top,
+                coverImgUrl: 'https://img.zcool.cn/community/01c6615d3ae047a8012187f447cfef.jpg@1280w_1l_2o_100sh.jpg'
+              ),
             ),
-          ),
-          SliverFillRemaining(
-            child: FilmContent(),
-          )
-        ],
+            SliverFillRemaining(
+              child: FilmContent(),
+            ),
+            SliverFillRemaining(
+              child: FilmContent(),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -60,7 +92,8 @@ class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
         statusBarBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.light,
       ));
-    } else if(shrinkOffset <= 50 && this.statusBarMode == 'light') {
+    } 
+    else if(shrinkOffset <= 50 && this.statusBarMode == 'light') {
       this.statusBarMode = 'dark';
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarBrightness: Brightness.dark,
@@ -71,12 +104,13 @@ class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   Color makeStickyHeaderBgColor(shrinkOffset) {
     final int alpha = (shrinkOffset / (this.maxExtent - this.minExtent) * 255).clamp(0, 255).toInt();
-    return Color.fromARGB(alpha, 255, 255, 255);
+    // return Color.fromARGB(alpha, 255, 255, 255);
+    return Colors.transparent;
   }
 
   Color makeStickyHeaderTextColor(shrinkOffset, isIcon) {
     if(shrinkOffset <= 50) {
-      return isIcon ? Colors.white : Colors.transparent;
+      return isIcon ? Colors.white : Colors.white10;
     } else {
       final int alpha = (shrinkOffset / (this.maxExtent - this.minExtent) * 255).clamp(0, 255).toInt();
       return Color.fromARGB(alpha, 0, 0, 0);

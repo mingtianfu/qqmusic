@@ -9,3 +9,5 @@ Color hexToColor(String s) {
 
   return new Color(int.parse(s.substring(1, 7), radix: 16) + 0xFF000000);
 }
+
+  final Color primaryColor = hexToColor('#31c27c');

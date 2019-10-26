@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -60,10 +61,12 @@ class _RotaeImageState extends State<RotaeImage> with SingleTickerProviderStateM
       turns: new Tween(begin: 0.0, end: 1.0).animate(animationController),
       child: ClipOval(
         child: widget.url == '' ? Image.asset('assets/images/player_album_cover_default.png', width: widget.size,)
-        : Image.network(
-          widget.url,
-          width: widget.size,
-          height: widget.size,
+        : CachedNetworkImage(
+            placeholder: (context, url) => Image.asset('assets/images/player_album_cover_default.png', width: widget.size,),
+            imageUrl: widget.url + '?param=200y200',
+//          widget.url,
+            width: widget.size,
+            height: widget.size,
         ),
       ),
     );
